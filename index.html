@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123b5d">
+<title>N'tiobala Glaces - Comptabilité</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#172633;font:15px -apple-system,BlinkMacSystemFont,Arial}
+header{background:#123b5d;color:white;padding:22px 17px}
+header h1{margin:0;font-size:22px}
+header p{margin:5px 0 0;color:#d6e5ef;font-size:13px}
+main{padding:14px 12px 90px;max-width:700px;margin:auto}
+nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:10px 2px;border-top:1px solid #ddd;z-index:5}
+nav button{border:0;background:white;color:#526170;font-size:12px;padding:7px 4px}
+nav button.active{color:#12609a;font-weight:bold}
+.page{display:none}.page.active{display:block}
+.card{background:white;border-radius:13px;padding:15px;margin:0 0 12px;box-shadow:0 2px 8px #0000000a}
+h2{font-size:18px;margin:0 0 13px}
+h3{font-size:14px;margin:0 0 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.metric{background:#eaf3f9;padding:12px;border-radius:10px}
+.metric small{display:block;color:#526170;font-size:11px}
+.metric strong{display:block;font-size:18px;margin-top:5px}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 5px}
+input,select{width:100%;padding:12px;border:1px solid #ccd5df;border-radius:9px;background:white;font-size:15px;color:#172633}
+button.action{background:#123b5d;color:white;border:0;padding:12px 15px;border-radius:9px;font-weight:600;margin-top:12px;width:100%;font-size:15px}
+button.secondary{background:#eaf3f9;color:#123b5d}
+button.danger{background:#fff0ed;color:#a52d20}
+.item{border-top:1px solid #e5e9ee;padding:11px 0;font-size:13px}
+.item strong{font-size:14px}
+.muted{color:#687783;font-size:12px}
+.green{color:#137443}.red{color:#b52e24}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{text-align:left;padding:9px 5px;border-bottom:1px solid #e5e9ee}
+.right{text-align:right}
+</style>
+</head>
+<body>
+<header>
+<h1>N'TIOBALA GLACES</h1>
+<p>Gestion quotidienne • Comptabilité en FCFA</p>
+</header>
+<main>
+<section id="accueil" class="page active">
+<div class="card">
+<h2>Tableau de bord</h2>
+<label>Date de consultation</label>
+<input type="date" id="dashDate">
+</div>
+<div class="grid">
+<div class="metric"><small>Chiffre d'affaires</small><strong id="ca">0 F</strong></div>
+<div class="metric"><small>Dépenses totales</small><strong id="dep">0 F</strong></div>
+<div class="metric"><small>Résultat net</small><strong id="res">0 F</strong></div>
+<div class="metric"><small>Nombre de ventes</small><strong id="nb">0</strong></div>
+</div>
+<div class="card" style="margin-top:12px">
+<h3>Résultat par activité</h3>
+<div id="resume"></div>
+</div>
+<div class="card">
+<h3>Principe de calcul</h3>
+<p class="muted">Les dépenses propres sont affectées à leur activité. Les charges communes sont réparties équitablement entre les trois activités.</p>
+</div>
+</section>
+
+<section id="ventes" class="page">
+<div class="card">
+<h2>Enregistrer une vente</h2>
+<label>Date</label><input type="date" id="vdate">
+<label>Activité</label>
+<select id="vact"><option>Barres de glace</option><option>Sachets de glaçons</option><option>Eau glacée</option></select>
+<label>Client (facultatif)</label><input id="vclient" placeholder="Nom du client">
+<label>Produit / détail</label><input id="vdetail" placeholder="Ex. 10 sachets">
+<label>Quantité</label><input id="vqty" type="number" min="1" value="1">
+<label>Prix unitaire (FCFA)</label><input id="vprice" type="number" min="0" placeholder="Ex. 500">
+<button class="action" onclick="addSale()">Enregistrer la vente</button>
+</div>
+<div class="card"><h3>Historique des ventes</h3><div id="salesList"></div></div>
+</section>
+
+<section id="depenses" class="page">
+<div class="card">
+<h2>Enregistrer une dépense</h2>
+<label>Date</label><input type="date" id="ddate">
+<label>Catégorie</label>
+<select id="dtype"><option value="propre">Dépense propre à une activité</option><option value="commune">Charge commune (à diviser par 3)</option></select>
+<div id="activityField">
+<label>Activité concernée</label>
+<select id="dact"><option>Barres de glace</option><option>Sachets de glaçons</option><option>Eau glacée</option></select>
+</div>
+<label>Libellé</label><input id="dlabel" placeholder="Ex. Électricité, transport...">
+<label>Montant (FCFA)</label><input id="damount" type="number" min="1" placeholder="Montant">
+<button class="action" onclick="addExpense()">Enregistrer la dépense</button>
+</div>
+<div class="card"><h3>Historique des dépenses</h3><div id="expenseList"></div></div>
+</section>
+
+<section id="bilan" class="page">
+<div class="card">
+<h2>Bilan comptable</h2>
+<label>Du</label><input type="date" id="from">
+<label>Au</label><input type="date" id="to">
+<button class="action" onclick="render()">Calculer le bilan</button>
+</div>
+<div class="card"><div id="report"></div></div>
+</section>
+
+<section id="donnees" class="page">
+<div class="card">
+<h2>Sauvegarde des données</h2>
+<p class="muted">Les données sont enregistrées sur cet iPhone et dans ce navigateur. Pense à faire régulièrement une sauvegarde.</p>
+<button class="action" onclick="backup()">Exporter une sauvegarde</button>
+<label>Restaurer une sauvegarde JSON</label>
+<input type="file" id="restoreFile" accept=".json,application/json">
+<button class="action secondary" onclick="restore()">Importer la sauvegarde</button>
+</div>
+<div class="card">
+<h3>Attention</h3>
+<p class="muted">Effacer les données du navigateur ou changer d'appareil peut faire perdre les enregistrements non sauvegardés. Conserve tes exports JSON.</p>
+<button class="action danger" onclick="clearData()">Effacer toutes les données</button>
+</div>
+</section>
+</main>
+<nav>
+<button class="active" onclick="show('accueil',this)">🏠<br>Accueil</button>
+<button onclick="show('ventes',this)">💰<br>Ventes</button>
+<button onclick="show('depenses',this)">🧾<br>Dépenses</button>
+<button onclick="show('bilan',this)">📊<br>Bilan</button>
+<button onclick="show('donnees',this)">💾<br>Données</button>
+</nav>
+<script>
+const activities=["Barres de glace","Sachets de glaçons","Eau glacée"];
+let sales=JSON.parse(localStorage.getItem("nt_sales")||"[]");
+let expenses=JSON.parse(localStorage.getItem("nt_expenses")||"[]");
+const today=()=>new Date().toLocaleDateString("en-CA");
+["dashDate","vdate","ddate","from","to"].forEach(id=>document.getElementById(id).value=today());
+function save(){localStorage.setItem("nt_sales",JSON.stringify(sales));localStorage.setItem("nt_expenses",JSON.stringify(expenses));}
+function money(n){return Math.round(n).toLocaleString("fr-FR")+" F";}
+function show(id,btn){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");render();
+}
+function addSale(){
+let qty=Number(vqty.value),price=Number(vprice.value);
+if(!vdate.value||qty<=0||price<=0){alert("Vérifie la date, la quantité et le prix.");return}
+sales.unshift({id:Date.now(),date:vdate.value,act:vact.value,client:vclient.value,detail:vdetail.value,qty,price,total:qty*price});
+save();vclient.value="";vdetail.value="";vqty.value=1;vprice.value="";render();alert("Vente enregistrée.");
+}
+function addExpense(){
+let amount=Number(damount.value);
+if(!ddate.value||amount<=0||!dlabel.value.trim()){alert("Complète les informations de la dépense.");return}
+expenses.unshift({id:Date.now(),date:ddate.value,type:dtype.value,act:dtype.value==="commune"?"Commune":dact.value,label:dlabel.value,amount});
+save();dlabel.value="";damount.value="";render();alert("Dépense enregistrée.");
+}
+dtype.onchange=()=>activityField.style.display=dtype.value==="commune"?"none":"block";
+function delSale(id){if(confirm("Supprimer cette vente ?")){sales=sales.filter(x=>x.id!==id);save();render()}}
+function delExpense(id){if(confirm("Supprimer cette dépense ?")){expenses=expenses.filter(x=>x.id!==id);save();render()}}
+function sumData(start,end){
+let s=sales.filter(x=>x.date>=start&&x.date<=end);
+let d=expenses.filter(x=>x.date>=start&&x.date<=end);
+return {s,d};
+}
+function calc(start,end){
+let {s,d}=sumData(start,end);
+return activities.map(a=>{
+let ca=s.filter(x=>x.act===a).reduce((t,x)=>t+x.total,0);
+let own=d.filter(x=>x.type==="propre"&&x.act===a).reduce((t,x)=>t+x.amount,0);
+let common=d.filter(x=>x.type==="commune").reduce((t,x)=>t+x.amount,0)/3;
+return {a,ca,own,common,result:ca-own-common};
+});
+}
+function render(){
+let date=dashDate.value||today(),r=calc(date,date);
+let ca=r.reduce((t,x)=>t+x.ca,0),dep=expenses.filter(x=>x.date===date).reduce((t,x)=>t+x.amount,0);
+document.getElementById("ca").textContent=money(ca);
+document.getElementById("dep").textContent=money(dep);
+document.getElementById("res").textContent=money(ca-dep);
+document.getElementById("nb").textContent=sales.filter(x=>x.date===date).length;
+document.getElementById("resume").innerHTML=r.map(x=>`<div class="item"><strong>${x.a}</strong><br>CA : ${money(x.ca)}<br>Résultat après charges : <b>${money(x.result)}</b></div>`).join("");
+document.getElementById("salesList").innerHTML=sales.slice(0,40).map(x=>`<div class="item"><strong>${x.act} — ${money(x.total)}</strong><br>${x.date} · ${x.qty} × ${money(x.price)} ${x.client?"· "+x.client:""}<br><button class="secondary" onclick="delSale(${x.id})">Supprimer</button></div>`).join("")||"Aucune vente.";
+document.getElementById("expenseList").innerHTML=expenses.slice(0,40).map(x=>`<div class="item"><strong>${x.label} — ${money(x.amount)}</strong><br>${x.date} · ${x.type==="commune"?"Charge commune":x.act}<br><button class="secondary" onclick="delExpense(${x.id})">Supprimer</button></div>`).join("")||"Aucune dépense.";
+let start=from.value||"0000-01-01",end=to.value||"9999-12-31",b=calc(start,end);
+let totalCA=b.reduce((t,x)=>t+x.ca,0),totalOwn=b.reduce((t,x)=>t+x.own,0),common=expenses.filter(x=>x.type==="commune"&&x.date>=start&&x.date<=end).reduce((t,x)=>t+x.amount,0);
+document.getElementById("report").innerHTML=`<h3>Du ${start} au ${end}</h3><p>Chiffre d'affaires : <b>${money(totalCA)}</b></p><p>Dépenses propres : ${money(totalOwn)}</p><p>Charges communes : ${money(common)}</p><p>Dépenses totales : <b>${money(totalOwn+common)}</b></p><h3>Résultat par activité</h3><table><tr><th>Activité</th><th class="right">CA</th><th class="right">Charges</th><th class="right">Résultat</th></tr>${b.map(x=>`<tr><td>${x.a}</td><td class="right">${money(x.ca)}</td><td class="right">${money(x.own+x.common)}</td><td class="right">${money(x.result)}</td></tr>`).join("")}</table><h3 style="margin-top:15px">Résultat global : ${money(totalCA-totalOwn-common)}</h3>`;
+}
+function backup(){
+let blob=new Blob([JSON.stringify({sales,expenses},null,2)],{type:"application/json"});
+let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ntiobala-sauvegarde.json";a.click();URL.revokeObjectURL(a.href);
+}
+function restore(){
+let f=restoreFile.files[0];if(!f){alert("Choisis un fichier JSON.");return}
+let reader=new FileReader();reader.onload=()=>{try{let x=JSON.parse(reader.result);if(!Array.isArray(x.sales)||!Array.isArray(x.expenses))throw Error();sales=x.sales;expenses=x.expenses;save();render();alert("Sauvegarde restaurée.");}catch(e){alert("Fichier de sauvegarde invalide.");}};reader.readAsText(f);
+}
+function clearData(){if(confirm("Effacer définitivement toutes les ventes et dépenses de cet appareil ?")){sales=[];expenses=[];save();render();}}
+dashDate.onchange=render;
+render();
+</script>
+</body>
+</html>
