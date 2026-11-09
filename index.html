@@ -1,204 +1,94 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#123b5d">
-<title>N'tiobala Glaces - Comptabilité</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173653">
+<title>N'tiobala Glaces</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#f1f5f9;color:#172633;font:15px -apple-system,BlinkMacSystemFont,Arial}
-header{background:#123b5d;color:white;padding:22px 17px}
-header h1{margin:0;font-size:22px}
-header p{margin:5px 0 0;color:#d6e5ef;font-size:13px}
-main{padding:14px 12px 90px;max-width:700px;margin:auto}
-nav{position:fixed;bottom:0;left:0;right:0;background:white;display:flex;justify-content:space-around;padding:10px 2px;border-top:1px solid #ddd;z-index:5}
-nav button{border:0;background:white;color:#526170;font-size:12px;padding:7px 4px}
-nav button.active{color:#12609a;font-weight:bold}
-.page{display:none}.page.active{display:block}
-.card{background:white;border-radius:13px;padding:15px;margin:0 0 12px;box-shadow:0 2px 8px #0000000a}
-h2{font-size:18px;margin:0 0 13px}
-h3{font-size:14px;margin:0 0 10px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.metric{background:#eaf3f9;padding:12px;border-radius:10px}
-.metric small{display:block;color:#526170;font-size:11px}
-.metric strong{display:block;font-size:18px;margin-top:5px}
-label{display:block;font-size:13px;font-weight:600;margin:10px 0 5px}
-input,select{width:100%;padding:12px;border:1px solid #ccd5df;border-radius:9px;background:white;font-size:15px;color:#172633}
-button.action{background:#123b5d;color:white;border:0;padding:12px 15px;border-radius:9px;font-weight:600;margin-top:12px;width:100%;font-size:15px}
-button.secondary{background:#eaf3f9;color:#123b5d}
-button.danger{background:#fff0ed;color:#a52d20}
-.item{border-top:1px solid #e5e9ee;padding:11px 0;font-size:13px}
-.item strong{font-size:14px}
-.muted{color:#687783;font-size:12px}
-.green{color:#137443}.red{color:#b52e24}
-table{width:100%;border-collapse:collapse;font-size:13px}
-td,th{text-align:left;padding:9px 5px;border-bottom:1px solid #e5e9ee}
-.right{text-align:right}
-</style>
-</head>
+:root{--navy:#173653;--green:#167a56;--bg:#f3f6f8;--ink:#1d2b38;--muted:#71808d;--line:#e4eaf0;--red:#b7473b;--amber:#96620e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}
+header{background:var(--navy);color:white;padding:calc(16px + env(safe-area-inset-top)) 18px 18px;position:sticky;top:0;z-index:4}.top{display:flex;justify-content:space-between;align-items:center}header h1{font-size:20px;margin:0}header p{font-size:12px;color:#d2e0eb;margin:5px 0 0}
+main{max-width:720px;margin:auto;padding:16px 14px calc(95px + env(safe-area-inset-bottom))}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:8;display:flex;justify-content:space-around;background:#fff;border-top:1px solid var(--line);padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -5px 20px #142c3d0b}nav button{border:0;background:none;color:var(--muted);font-size:11px;min-width:56px;padding:4px 3px}nav button span{display:block;font-size:20px;margin-bottom:3px}nav button.active{color:var(--green);font-weight:700}
+.page{display:none}.page.active{display:block}.heading{display:flex;align-items:center;justify-content:space-between;margin:5px 2px 14px}.heading h2{font-size:21px;margin:0}.sub{color:var(--muted);font-size:12px;margin-top:4px}
+.hero{background:linear-gradient(135deg,#173653,#245777);color:#fff;border-radius:20px;padding:19px;margin-bottom:13px}.eyebrow{font-size:12px;color:#c9dbe8}.amount{font-size:32px;font-weight:800;margin:8px 0 2px}.foot{font-size:12px;color:#d5e2eb}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px}.metric,.card{background:#fff;border-radius:16px;padding:15px;box-shadow:0 3px 14px #1a33450a}.metric .label{font-size:12px;color:var(--muted)}.metric strong{display:block;font-size:20px;margin-top:7px}.metric small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.card{margin-bottom:13px}.card h3{font-size:15px;margin:0 0 12px}
+.activity{display:flex;align-items:center;gap:11px;padding:12px 0;border-top:1px solid var(--line)}.bubble{width:39px;height:39px;border-radius:12px;background:#eaf2f7;display:grid;place-items:center;font-size:19px}.activity .name{font-weight:700;font-size:14px}.activity .meta{font-size:11px;color:var(--muted);margin-top:3px}.activity .value{margin-left:auto;font-weight:750;white-space:nowrap}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.action{border:0;border-radius:12px;padding:14px 10px;background:var(--green);color:#fff;font-weight:700}.action.secondary{background:#eaf2f7;color:var(--navy)}.action.light{background:#fff;color:var(--navy);border:1px solid var(--line)}
+label{display:block;font-size:12px;font-weight:700;margin:13px 0 6px;color:#455565}input,select{width:100%;border:1px solid #d7e0e8;border-radius:11px;padding:12px;background:#fff;color:var(--ink);min-height:45px}input:focus,select:focus{outline:2px solid #b8d7e8;border-color:#2876a8}.row{display:flex;gap:9px}.row>*{flex:1;min-width:0}
+.pillrow{display:flex;gap:8px}.pill{flex:1;border:1px solid var(--line);background:#fff;border-radius:11px;padding:12px 6px;color:var(--muted);font-weight:700}.pill.selected{border:2px solid var(--green);color:var(--green);background:#eff8f3}
+.totalbox{background:#eff5f8;border-radius:13px;padding:14px;margin-top:14px;display:flex;justify-content:space-between;align-items:center}.totalbox strong{font-size:20px}
+.listrow{padding:13px 0;border-top:1px solid var(--line)}.listrow .title{font-weight:700}.detail{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}.right{margin-left:auto;text-align:right}.badge{display:inline-block;font-size:10px;font-weight:700;border-radius:30px;padding:4px 8px;background:#edf2f6;color:#536473}.badge.green{background:#e8f5ee;color:var(--green)}.badge.amber{background:#fff4df;color:var(--amber)}
+.smallbtn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 10px;font-size:12px;color:var(--navy);font-weight:700;margin:8px 5px 0 0}.smallbtn.danger{color:var(--red)}.muted{font-size:12px;color:var(--muted);line-height:1.5}.empty{text-align:center;padding:22px 10px;color:var(--muted);font-size:13px}.hidden{display:none!important}.reportline{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.reportline strong{text-align:right}.dangertext{color:var(--red)}.success{color:var(--green)}
+@media(min-width:600px){main{padding-top:22px}.metrics{grid-template-columns:repeat(4,1fr)}}
+</style></head>
 <body>
-<header>
-<h1>N'TIOBALA GLACES</h1>
-<p>Gestion quotidienne • Comptabilité en FCFA</p>
-</header>
+<header><div class="top"><div><h1>N'TIOBALA GLACES</h1><p>Gestion commerciale & comptabilité</p></div><div style="font-size:25px">❄️</div></div></header>
 <main>
-<section id="accueil" class="page active">
-<div class="card">
-<h2>Tableau de bord</h2>
-<label>Date de consultation</label>
-<input type="date" id="dashDate">
-</div>
-<div class="grid">
-<div class="metric"><small>Chiffre d'affaires</small><strong id="ca">0 F</strong></div>
-<div class="metric"><small>Dépenses totales</small><strong id="dep">0 F</strong></div>
-<div class="metric"><small>Résultat net</small><strong id="res">0 F</strong></div>
-<div class="metric"><small>Nombre de ventes</small><strong id="nb">0</strong></div>
-</div>
-<div class="card" style="margin-top:12px">
-<h3>Résultat par activité</h3>
-<div id="resume"></div>
-</div>
-<div class="card">
-<h3>Principe de calcul</h3>
-<p class="muted">Les dépenses propres sont affectées à leur activité. Les charges communes sont réparties équitablement entre les trois activités.</p>
-</div>
+<section id="home" class="page active">
+<div class="heading"><div><h2>Vue d'ensemble</h2><div class="sub" id="todayLabel"></div></div><button class="smallbtn" onclick="go('report')">Bilan ↗</button></div>
+<div class="hero"><div class="eyebrow">CHIFFRE D'AFFAIRES DU JOUR</div><div class="amount" id="homeCA">0 FCFA</div><div class="foot" id="homeCount">0 vente aujourd'hui</div></div>
+<div class="metrics">
+<div class="metric"><div class="label">Argent encaissé</div><strong id="homeCash">0 F</strong><small>Espèces reçues aujourd'hui</small></div>
+<div class="metric"><div class="label">Crédits clients</div><strong id="homeCredit">0 F</strong><small>Reste à récupérer</small></div>
+<div class="metric"><div class="label">Dépenses</div><strong id="homeExpense">0 F</strong><small>Sorties du jour</small></div>
+<div class="metric"><div class="label">Trésorerie du jour</div><strong id="homeBalance">0 F</strong><small>Encaissé − dépenses</small></div></div>
+<div class="card"><h3>Mes activités</h3><div id="homeActivities"></div></div>
+<div class="card"><h3>Actions rapides</h3><div class="actions"><button class="action" onclick="go('newSale')">＋ Nouvelle vente</button><button class="action secondary" onclick="go('newExpense')">＋ Dépense</button><button class="action light" onclick="go('debts')">Clients à crédit</button><button class="action light" onclick="go('report')">Consulter les bilans</button></div></div>
 </section>
-
-<section id="ventes" class="page">
-<div class="card">
-<h2>Enregistrer une vente</h2>
-<label>Date</label><input type="date" id="vdate">
-<label>Activité</label>
-<select id="vact"><option>Barres de glace</option><option>Sachets de glaçons</option><option>Eau glacée</option></select>
-<label>Client (facultatif)</label><input id="vclient" placeholder="Nom du client">
-<label>Produit / détail</label><input id="vdetail" placeholder="Ex. 10 sachets">
-<label>Quantité</label><input id="vqty" type="number" min="1" value="1">
-<label>Prix unitaire (FCFA)</label><input id="vprice" type="number" min="0" placeholder="Ex. 500">
-<button class="action" onclick="addSale()">Enregistrer la vente</button>
-</div>
-<div class="card"><h3>Historique des ventes</h3><div id="salesList"></div></div>
-</section>
-
-<section id="depenses" class="page">
-<div class="card">
-<h2>Enregistrer une dépense</h2>
-<label>Date</label><input type="date" id="ddate">
-<label>Catégorie</label>
-<select id="dtype"><option value="propre">Dépense propre à une activité</option><option value="commune">Charge commune (à diviser par 3)</option></select>
-<div id="activityField">
-<label>Activité concernée</label>
-<select id="dact"><option>Barres de glace</option><option>Sachets de glaçons</option><option>Eau glacée</option></select>
-</div>
-<label>Libellé</label><input id="dlabel" placeholder="Ex. Électricité, transport...">
-<label>Montant (FCFA)</label><input id="damount" type="number" min="1" placeholder="Montant">
-<button class="action" onclick="addExpense()">Enregistrer la dépense</button>
-</div>
-<div class="card"><h3>Historique des dépenses</h3><div id="expenseList"></div></div>
-</section>
-
-<section id="bilan" class="page">
-<div class="card">
-<h2>Bilan comptable</h2>
-<label>Du</label><input type="date" id="from">
-<label>Au</label><input type="date" id="to">
-<button class="action" onclick="render()">Calculer le bilan</button>
-</div>
-<div class="card"><div id="report"></div></div>
-</section>
-
-<section id="donnees" class="page">
-<div class="card">
-<h2>Sauvegarde des données</h2>
-<p class="muted">Les données sont enregistrées sur cet iPhone et dans ce navigateur. Pense à faire régulièrement une sauvegarde.</p>
-<button class="action" onclick="backup()">Exporter une sauvegarde</button>
-<label>Restaurer une sauvegarde JSON</label>
-<input type="file" id="restoreFile" accept=".json,application/json">
-<button class="action secondary" onclick="restore()">Importer la sauvegarde</button>
-</div>
-<div class="card">
-<h3>Attention</h3>
-<p class="muted">Effacer les données du navigateur ou changer d'appareil peut faire perdre les enregistrements non sauvegardés. Conserve tes exports JSON.</p>
-<button class="action danger" onclick="clearData()">Effacer toutes les données</button>
-</div>
-</section>
+<section id="newSale" class="page"><div class="heading"><div><h2>Nouvelle vente</h2><div class="sub">Vente comptant ou crédit client</div></div></div><div class="card">
+<label>Date de vente</label><input id="sDate" type="date">
+<label>Activité</label><select id="sAct"><option>Barres de glace</option><option>Sachets de glaçons</option><option>Eau glacée</option></select>
+<label>Produit / détail</label><input id="sProduct" placeholder="Ex. barre de glace, sachet 1 L...">
+<label>Client</label><input id="sClient" placeholder="Nom du client (obligatoire pour crédit)">
+<div class="row"><div><label>Quantité</label><input id="sQty" type="number" min="0.01" step="any" value="1"></div><div><label>Prix unitaire (FCFA)</label><input id="sPrice" type="number" min="1" placeholder="Prix"></div></div>
+<label>Mode de règlement</label><div class="pillrow"><button type="button" class="pill selected" id="payCash" onclick="setPay('cash')">💵 Espèces</button><button type="button" class="pill" id="payCredit" onclick="setPay('credit')">🧾 À crédit</button></div>
+<div id="initialPaidWrap" class="hidden"><label>Montant déjà versé (FCFA)</label><input id="sPaid" type="number" min="0" value="0"><div class="muted">0 si le client n'a encore rien payé.</div></div>
+<div class="totalbox"><div><div class="muted">Total de la vente</div><strong id="saleTotal">0 F</strong></div><div style="text-align:right"><div class="muted">Reste dû</div><strong id="saleDue" class="dangertext">0 F</strong></div></div>
+<button class="action" style="width:100%;margin-top:14px" onclick="addSale()">Enregistrer la vente</button></div></section>
+<section id="newExpense" class="page"><div class="heading"><div><h2>Nouvelle dépense</h2><div class="sub">Suivre les sorties d'argent</div></div></div><div class="card">
+<label>Date</label><input id="eDate" type="date"><label>Type de dépense</label><select id="eType" onchange="toggleExpenseAct()"><option value="own">Propre à une activité</option><option value="shared">Charge commune (répartie en 3)</option></select>
+<div id="expenseActWrap"><label>Activité concernée</label><select id="eAct"><option>Barres de glace</option><option>Sachets de glaçons</option><option>Eau glacée</option></select></div>
+<label>Motif / catégorie</label><input id="eLabel" placeholder="Ex. transport, entretien, emballages..."><label>Montant (FCFA)</label><input id="eAmount" type="number" min="1" placeholder="Montant payé"><button class="action" style="width:100%;margin-top:14px" onclick="addExpense()">Enregistrer la dépense</button></div></section>
+<section id="debts" class="page"><div class="heading"><div><h2>Crédits clients</h2><div class="sub">Suivi des montants à récupérer</div></div></div><div class="metrics"><div class="metric"><div class="label">Total restant dû</div><strong id="debtTotal">0 F</strong></div><div class="metric"><div class="label">Clients concernés</div><strong id="debtCount">0</strong></div></div><div class="card"><h3>Créances en cours</h3><div id="debtList"></div></div><div class="card"><h3>Historique des règlements</h3><div id="paymentList"></div></div></section>
+<section id="report" class="page"><div class="heading"><div><h2>Bilans & résultats</h2><div class="sub">Choisis la période à analyser</div></div></div><div class="card"><div class="row"><div><label>Du</label><input id="rFrom" type="date"></div><div><label>Au</label><input id="rTo" type="date"></div></div><button class="action" style="width:100%;margin-top:13px" onclick="renderAll()">Calculer</button></div><div class="card" id="reportContent"></div></section>
+<section id="history" class="page"><div class="heading"><div><h2>Historique</h2><div class="sub">Ventes et dépenses récentes</div></div></div><div class="card"><h3>Ventes</h3><div id="historySales"></div></div><div class="card"><h3>Dépenses</h3><div id="historyExpenses"></div></div></section>
+<section id="settings" class="page"><div class="heading"><div><h2>Données & sauvegardes</h2><div class="sub">Tes données restent sur cet iPhone</div></div></div><div class="card"><h3>Sauvegarder</h3><p class="muted">Exporte ventes, dépenses et règlements dans un fichier JSON à conserver dans Fichiers ou iCloud Drive.</p><button class="action" style="width:100%" onclick="backup()">Exporter une sauvegarde</button><label>Restaurer une sauvegarde</label><input id="restoreFile" type="file" accept=".json,application/json"><button class="action secondary" style="width:100%" onclick="restoreBackup()">Importer la sauvegarde</button></div><div class="card"><h3>Informations</h3><div class="reportline"><span>Stockage</span><strong>Local sur cet iPhone</strong></div><div class="reportline"><span>Paiements</span><strong>Espèces / crédit</strong></div><div class="reportline"><span>Charges communes</span><strong>1/3 par activité</strong></div><p class="muted">Fais des sauvegardes régulières. Le site hébergé ne reçoit pas les opérations comptables.</p></div></section>
 </main>
-<nav>
-<button class="active" onclick="show('accueil',this)">🏠<br>Accueil</button>
-<button onclick="show('ventes',this)">💰<br>Ventes</button>
-<button onclick="show('depenses',this)">🧾<br>Dépenses</button>
-<button onclick="show('bilan',this)">📊<br>Bilan</button>
-<button onclick="show('donnees',this)">💾<br>Données</button>
-</nav>
+<nav><button class="active" data-page="home" onclick="go('home')"><span>⌂</span>Accueil</button><button data-page="newSale" onclick="go('newSale')"><span>＋</span>Vente</button><button data-page="debts" onclick="go('debts')"><span>▤</span>Crédits</button><button data-page="history" onclick="go('history')"><span>◷</span>Historique</button><button data-page="settings" onclick="go('settings')"><span>⚙</span>Plus</button></nav>
 <script>
-const activities=["Barres de glace","Sachets de glaçons","Eau glacée"];
-let sales=JSON.parse(localStorage.getItem("nt_sales")||"[]");
-let expenses=JSON.parse(localStorage.getItem("nt_expenses")||"[]");
-const today=()=>new Date().toLocaleDateString("en-CA");
-["dashDate","vdate","ddate","from","to"].forEach(id=>document.getElementById(id).value=today());
-function save(){localStorage.setItem("nt_sales",JSON.stringify(sales));localStorage.setItem("nt_expenses",JSON.stringify(expenses));}
-function money(n){return Math.round(n).toLocaleString("fr-FR")+" F";}
-function show(id,btn){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");render();
-}
-function addSale(){
-let qty=Number(vqty.value),price=Number(vprice.value);
-if(!vdate.value||qty<=0||price<=0){alert("Vérifie la date, la quantité et le prix.");return}
-sales.unshift({id:Date.now(),date:vdate.value,act:vact.value,client:vclient.value,detail:vdetail.value,qty,price,total:qty*price});
-save();vclient.value="";vdetail.value="";vqty.value=1;vprice.value="";render();alert("Vente enregistrée.");
-}
-function addExpense(){
-let amount=Number(damount.value);
-if(!ddate.value||amount<=0||!dlabel.value.trim()){alert("Complète les informations de la dépense.");return}
-expenses.unshift({id:Date.now(),date:ddate.value,type:dtype.value,act:dtype.value==="commune"?"Commune":dact.value,label:dlabel.value,amount});
-save();dlabel.value="";damount.value="";render();alert("Dépense enregistrée.");
-}
-dtype.onchange=()=>activityField.style.display=dtype.value==="commune"?"none":"block";
-function delSale(id){if(confirm("Supprimer cette vente ?")){sales=sales.filter(x=>x.id!==id);save();render()}}
-function delExpense(id){if(confirm("Supprimer cette dépense ?")){expenses=expenses.filter(x=>x.id!==id);save();render()}}
-function sumData(start,end){
-let s=sales.filter(x=>x.date>=start&&x.date<=end);
-let d=expenses.filter(x=>x.date>=start&&x.date<=end);
-return {s,d};
-}
-function calc(start,end){
-let {s,d}=sumData(start,end);
-return activities.map(a=>{
-let ca=s.filter(x=>x.act===a).reduce((t,x)=>t+x.total,0);
-let own=d.filter(x=>x.type==="propre"&&x.act===a).reduce((t,x)=>t+x.amount,0);
-let common=d.filter(x=>x.type==="commune").reduce((t,x)=>t+x.amount,0)/3;
-return {a,ca,own,common,result:ca-own-common};
-});
-}
-function render(){
-let date=dashDate.value||today(),r=calc(date,date);
-let ca=r.reduce((t,x)=>t+x.ca,0),dep=expenses.filter(x=>x.date===date).reduce((t,x)=>t+x.amount,0);
-document.getElementById("ca").textContent=money(ca);
-document.getElementById("dep").textContent=money(dep);
-document.getElementById("res").textContent=money(ca-dep);
-document.getElementById("nb").textContent=sales.filter(x=>x.date===date).length;
-document.getElementById("resume").innerHTML=r.map(x=>`<div class="item"><strong>${x.a}</strong><br>CA : ${money(x.ca)}<br>Résultat après charges : <b>${money(x.result)}</b></div>`).join("");
-document.getElementById("salesList").innerHTML=sales.slice(0,40).map(x=>`<div class="item"><strong>${x.act} — ${money(x.total)}</strong><br>${x.date} · ${x.qty} × ${money(x.price)} ${x.client?"· "+x.client:""}<br><button class="secondary" onclick="delSale(${x.id})">Supprimer</button></div>`).join("")||"Aucune vente.";
-document.getElementById("expenseList").innerHTML=expenses.slice(0,40).map(x=>`<div class="item"><strong>${x.label} — ${money(x.amount)}</strong><br>${x.date} · ${x.type==="commune"?"Charge commune":x.act}<br><button class="secondary" onclick="delExpense(${x.id})">Supprimer</button></div>`).join("")||"Aucune dépense.";
-let start=from.value||"0000-01-01",end=to.value||"9999-12-31",b=calc(start,end);
-let totalCA=b.reduce((t,x)=>t+x.ca,0),totalOwn=b.reduce((t,x)=>t+x.own,0),common=expenses.filter(x=>x.type==="commune"&&x.date>=start&&x.date<=end).reduce((t,x)=>t+x.amount,0);
-document.getElementById("report").innerHTML=`<h3>Du ${start} au ${end}</h3><p>Chiffre d'affaires : <b>${money(totalCA)}</b></p><p>Dépenses propres : ${money(totalOwn)}</p><p>Charges communes : ${money(common)}</p><p>Dépenses totales : <b>${money(totalOwn+common)}</b></p><h3>Résultat par activité</h3><table><tr><th>Activité</th><th class="right">CA</th><th class="right">Charges</th><th class="right">Résultat</th></tr>${b.map(x=>`<tr><td>${x.a}</td><td class="right">${money(x.ca)}</td><td class="right">${money(x.own+x.common)}</td><td class="right">${money(x.result)}</td></tr>`).join("")}</table><h3 style="margin-top:15px">Résultat global : ${money(totalCA-totalOwn-common)}</h3>`;
-}
-function backup(){
-let blob=new Blob([JSON.stringify({sales,expenses},null,2)],{type:"application/json"});
-let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ntiobala-sauvegarde.json";a.click();URL.revokeObjectURL(a.href);
-}
-function restore(){
-let f=restoreFile.files[0];if(!f){alert("Choisis un fichier JSON.");return}
-let reader=new FileReader();reader.onload=()=>{try{let x=JSON.parse(reader.result);if(!Array.isArray(x.sales)||!Array.isArray(x.expenses))throw Error();sales=x.sales;expenses=x.expenses;save();render();alert("Sauvegarde restaurée.");}catch(e){alert("Fichier de sauvegarde invalide.");}};reader.readAsText(f);
-}
-function clearData(){if(confirm("Effacer définitivement toutes les ventes et dépenses de cet appareil ?")){sales=[];expenses=[];save();render();}}
-dashDate.onchange=render;
-render();
-</script>
-</body>
-</html>
+const ACTS=["Barres de glace","Sachets de glaçons","Eau glacée"],DB_NAME="ntiobala_local_v2";
+let db,sales=[],expenses=[],collections=[],payMode="cash";const $=id=>document.getElementById(id);
+const today=()=>{let d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")};
+const money=n=>Math.round(Number(n)||0).toLocaleString("fr-FR")+" F";
+const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function openDB(){return new Promise((ok,no)=>{let r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{let d=r.result;["sales","expenses","collections"].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:"id"})})};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
+function getAll(s){return new Promise((ok,no)=>{let r=db.transaction(s).objectStore(s).getAll();r.onsuccess=()=>ok(r.result||[]);r.onerror=()=>no(r.error)})}
+function put(s,x){return new Promise((ok,no)=>{let t=db.transaction(s,"readwrite");t.objectStore(s).put(x);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
+function del(s,id){return new Promise((ok,no)=>{let t=db.transaction(s,"readwrite");t.objectStore(s).delete(id);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
+async function migrate(){if(localStorage.getItem("nt_v2_migrated"))return;let a=[],b=[];try{a=JSON.parse(localStorage.getItem("nt_sales")||"[]");b=JSON.parse(localStorage.getItem("nt_expenses")||"[]")}catch{}for(let x of a)await put("sales",{...x,id:"legacy-"+x.id,paid:Number(x.total)||0,due:0,payment:"cash",createdAt:Number(x.id)||Date.now()});for(let x of b)await put("expenses",{...x,id:"legacy-"+x.id,createdAt:Number(x.id)||Date.now()});localStorage.setItem("nt_v2_migrated","1")}
+async function refresh(){[sales,expenses,collections]=await Promise.all(["sales","expenses","collections"].map(getAll));sales.sort((a,b)=>b.createdAt-a.createdAt);expenses.sort((a,b)=>b.createdAt-a.createdAt);collections.sort((a,b)=>b.createdAt-a.createdAt);renderAll()}
+function go(id){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$(id).classList.add("active");document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===id));if(id==="newSale")preview();renderAll();window.scrollTo(0,0)}
+function setPay(m){payMode=m;$("payCash").classList.toggle("selected",m==="cash");$("payCredit").classList.toggle("selected",m==="credit");$("initialPaidWrap").classList.toggle("hidden",m!=="credit");preview()}
+function preview(){let total=(Number($("sQty").value)||0)*(Number($("sPrice").value)||0),paid=payMode==="cash"?total:Math.min(total,Number($("sPaid").value)||0);$("saleTotal").textContent=money(total);$("saleDue").textContent=money(Math.max(0,total-paid))}
+async function addSale(){let qty=Number($("sQty").value),price=Number($("sPrice").value),total=qty*price,client=$("sClient").value.trim(),paid=payMode==="cash"?total:Number($("sPaid").value)||0;if(!$("sDate").value||qty<=0||price<=0){alert("Vérifie la date, la quantité et le prix.");return}if(payMode==="credit"&&!client){alert("Indique le nom du client pour une vente à crédit.");return}if(paid<0||paid>total){alert("Le montant versé ne peut pas dépasser le total.");return}let id=crypto.randomUUID?crypto.randomUUID():String(Date.now()),s={id,date:$("sDate").value,act:$("sAct").value,product:$("sProduct").value.trim(),client,qty,price,total,paid,due:total-paid,payment:paid===total?"cash":paid>0?"partial":"credit",createdAt:Date.now()};await put("sales",s);if(payMode==="credit"&&paid>0)await put("collections",{id:"initial-"+id,saleId:id,date:s.date,client,amount:paid,createdAt:Date.now(),note:"Versement initial"});$("sProduct").value=$("sClient").value=$("sPrice").value="";$("sQty").value=1;$("sPaid").value=0;setPay("cash");await refresh();alert("Vente enregistrée.");go("home")}
+async function editSale(id){let s=sales.find(x=>x.id===id);if(!s)return;let date=prompt("Date de la vente (AAAA-MM-JJ)",s.date);if(date===null)return;if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)){alert("Format de date invalide.");return}let act=prompt("Activité : 1 Barres de glace, 2 Sachets de glaçons, 3 Eau glacée",String(ACTS.indexOf(s.act)+1));if(act===null)return;let ai=Number(act);if(![1,2,3].includes(ai)){alert("Activité invalide.");return}let client=prompt("Nom du client",s.client||"");if(client===null)return;let product=prompt("Produit / détail",s.product||"");if(product===null)return;let qty=Number(prompt("Quantité",String(s.qty)));if(!Number.isFinite(qty)||qty<=0){alert("Quantité invalide.");return}let price=Number(prompt("Prix unitaire en FCFA",String(s.price)));if(!Number.isFinite(price)||price<=0){alert("Prix invalide.");return}let total=qty*price;if(s.paid>total){alert("Modification impossible : le nouveau total ("+money(total)+") est inférieur aux montants déjà encaissés ("+money(s.paid)+").");return}if(s.due>0&&!client.trim()){alert("Un client doit être identifié pour une vente à crédit.");return}s.date=date;s.act=ACTS[ai-1];s.client=client.trim();s.product=product.trim();s.qty=qty;s.price=price;s.total=total;s.due=total-s.paid;s.payment=s.due===0?"cash":s.paid>0?"partial":"credit";await put("sales",s);for(let c of collections.filter(x=>x.saleId===id)){c.client=s.client;await put("collections",c)}await refresh();alert("Vente modifiée. Les règlements déjà reçus ont été conservés.")}
+async function addExpense(){let amount=Number($("eAmount").value),label=$("eLabel").value.trim();if(!$("eDate").value||amount<=0||!label){alert("Complète la date, le motif et le montant.");return}await put("expenses",{id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),date:$("eDate").value,type:$("eType").value,act:$("eType").value==="shared"?"Commune":$("eAct").value,label,amount,createdAt:Date.now()});$("eLabel").value=$("eAmount").value="";await refresh();alert("Dépense enregistrée.");go("home")}
+function toggleExpenseAct(){$("expenseActWrap").classList.toggle("hidden",$("eType").value==="shared")}
+async function collectDebt(id){let s=sales.find(x=>x.id===id);if(!s||s.due<=0)return;let v=prompt("Reste dû : "+money(s.due)+"\\nMontant reçu en espèces :");if(v===null)return;let amount=Number(v);if(!Number.isFinite(amount)||amount<=0||amount>s.due){alert("Montant invalide.");return}let date=prompt("Date du règlement (AAAA-MM-JJ)",today());if(!date)return;s.paid+=amount;s.due-=amount;s.payment=s.due===0?"cash":"partial";await put("sales",s);await put("collections",{id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),saleId:id,date,client:s.client,amount,createdAt:Date.now()});await refresh();alert("Règlement enregistré.")}
+async function deleteSale(id){if(!confirm("Supprimer définitivement cette vente et ses règlements associés ?"))return;for(let c of collections.filter(x=>x.saleId===id))await del("collections",c.id);await del("sales",id);await refresh()}
+async function deleteExpense(id){if(!confirm("Supprimer cette dépense ?"))return;await del("expenses",id);await refresh()}
+function cashFor(from,to){let direct=sales.filter(s=>s.date>=from&&s.date<=to&&s.payment==="cash").reduce((t,s)=>t+s.total,0);let paidLater=collections.filter(c=>c.date>=from&&c.date<=to).reduce((t,c)=>t+c.amount,0);return direct+paidLater}
+function renderHome(){let d=today(),ss=sales.filter(x=>x.date===d),ee=expenses.filter(x=>x.date===d),ca=ss.reduce((t,x)=>t+x.total,0),cash=cashFor(d,d),exp=ee.reduce((t,x)=>t+x.amount,0),due=sales.reduce((t,x)=>t+x.due,0);$("todayLabel").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});$("homeCA").textContent=money(ca);$("homeCount").textContent=ss.length+" vente(s) aujourd'hui";$("homeCash").textContent=money(cash);$("homeCredit").textContent=money(due);$("homeExpense").textContent=money(exp);$("homeBalance").textContent=money(cash-exp);$("homeActivities").innerHTML=ACTS.map((a,i)=>{let xs=ss.filter(x=>x.act===a);return '<div class="activity"><div class="bubble">'+["🧊","❄️","💧"][i]+'</div><div><div class="name">'+a+'</div><div class="meta">'+xs.length+' vente(s) aujourd’hui</div></div><div class="value">'+money(xs.reduce((t,x)=>t+x.total,0))+'</div></div>'}).join("")}
+function saleActions(id){return '<button class="smallbtn" onclick="editSale(\\''+id+'\\')">✎ Modifier</button><button class="smallbtn danger" onclick="deleteSale(\\''+id+'\\')">Supprimer</button>'}
+function renderDebts(){let open=sales.filter(x=>x.due>0);$("debtTotal").textContent=money(open.reduce((t,x)=>t+x.due,0));$("debtCount").textContent=new Set(open.map(x=>(x.client||"").toLowerCase())).size;$("debtList").innerHTML=open.length?open.map(s=>'<div class="listrow"><div class="row"><div style="flex:1"><div class="title">'+safe(s.client)+'</div><div class="detail">'+safe(s.act)+' · '+safe(s.product||"Vente")+' · '+s.date+'<br>Total '+money(s.total)+' · Versé '+money(s.paid)+'</div></div><div class="right"><strong class="dangertext">'+money(s.due)+'</strong><br><span class="badge amber">À récupérer</span></div></div><button class="smallbtn" onclick="collectDebt(\\''+s.id+'\\')">＋ Encaisser un règlement</button>'+saleActions(s.id)+'</div>').join(""):'<div class="empty">Aucun crédit client en cours 🎉</div>';$("paymentList").innerHTML=collections.length?collections.map(c=>'<div class="listrow"><div class="row"><div style="flex:1"><div class="title">'+safe(c.client)+'</div><div class="detail">'+c.date+(c.note?" · "+safe(c.note):"")+'</div></div><strong class="success">+'+money(c.amount)+'</strong></div></div>').join(""):'<div class="empty">Aucun règlement enregistré.</div>'}
+function renderHistory(){$("historySales").innerHTML=sales.length?sales.slice(0,100).map(s=>'<div class="listrow"><div class="row"><div style="flex:1"><div class="title">'+safe(s.act)+' · '+money(s.total)+'</div><div class="detail">'+s.date+' · '+safe(s.client||"Client comptant")+' · '+safe(s.product||"")+'<br>Quantité '+s.qty+' · Prix unitaire '+money(s.price)+' · Encaissé '+money(s.paid)+'</div><span class="badge '+(s.due>0?"amber":"green")+'">'+(s.due>0?"Reste dû "+money(s.due):"Réglée")+'</span></div></div>'+saleActions(s.id)+'</div>').join(""):'<div class="empty">Aucune vente enregistrée.</div>';$("historyExpenses").innerHTML=expenses.length?expenses.slice(0,100).map(e=>'<div class="listrow"><div class="row"><div style="flex:1"><div class="title">'+safe(e.label)+' · '+money(e.amount)+'</div><div class="detail">'+e.date+' · '+(e.type==="shared"?"Charge commune":safe(e.act))+'</div></div><button class="smallbtn danger" onclick="deleteExpense(\\''+e.id+'\\')">Supprimer</button></div></div>').join(""):'<div class="empty">Aucune dépense enregistrée.</div>'}
+function line(a,b,bold=false){return '<div class="reportline"><span>'+(bold?'<b>'+a+'</b>':a)+'</span><strong>'+(bold?'<b>'+b+'</b>':b)+'</strong></div>'}
+function renderReport(){let f=$("rFrom").value||"0000-01-01",t=$("rTo").value||"9999-12-31",ss=sales.filter(x=>x.date>=f&&x.date<=t),ee=expenses.filter(x=>x.date>=f&&x.date<=t),ca=ss.reduce((a,x)=>a+x.total,0),cash=cashFor(f,t),due=ss.reduce((a,x)=>a+x.due,0),own=ee.filter(x=>x.type==="own").reduce((a,x)=>a+x.amount,0),shared=ee.filter(x=>x.type==="shared").reduce((a,x)=>a+x.amount,0),spent=own+shared;let h='<div class="muted">Période : '+f+' au '+t+'</div>'+line("Chiffre d’affaires",money(ca))+line("Encaissements en espèces",money(cash))+line("Crédits restant dus sur les ventes de la période",money(due))+line("Dépenses propres",money(own))+line("Charges communes",money(shared))+line("Dépenses totales",money(spent))+line("Résultat commercial",money(ca-spent),true)+'<h3 style="margin:20px 0 8px">Résultat par activité</h3>';for(let a of ACTS){let ac=ss.filter(x=>x.act===a).reduce((v,x)=>v+x.total,0),ex=ee.filter(x=>x.type==="own"&&x.act===a).reduce((v,x)=>v+x.amount,0);h+='<div class="listrow"><b>'+a+'</b>'+line("Chiffre d’affaires",money(ac))+line("Dépenses propres",money(ex))+line("Part charges communes",money(shared/3))+line("Résultat",money(ac-ex-shared/3),true)+'</div>'}$("reportContent").innerHTML=h}
+function renderAll(){if(!db)return;renderHome();renderDebts();renderHistory();renderReport()}
+function backup(){let d={app:"NtiobalaGlaces",version:2,exportedAt:new Date().toISOString(),sales,expenses,collections},blob=new Blob([JSON.stringify(d,null,2)],{type:"application/json"}),a=document.createElement("a"),u=URL.createObjectURL(blob);a.href=u;a.download="ntiobala-sauvegarde-"+today()+".json";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+async function restoreBackup(){let file=$("restoreFile").files[0];if(!file){alert("Choisis un fichier JSON.");return}if(!confirm("La restauration remplacera les données présentes. Continuer ?"))return;try{let x=JSON.parse(await file.text());if(!Array.isArray(x.sales)||!Array.isArray(x.expenses))throw Error();let tx=db.transaction(["sales","expenses","collections"],"readwrite");["sales","expenses","collections"].forEach(s=>tx.objectStore(s).clear());x.sales.forEach(s=>tx.objectStore("sales").put(s));x.expenses.forEach(e=>tx.objectStore("expenses").put(e));(x.collections||[]).forEach(c=>tx.objectStore("collections").put(c));tx.oncomplete=async()=>{await refresh();alert("Sauvegarde restaurée.")};tx.onerror=()=>alert("Erreur de restauration.")}catch(e){alert("Fichier invalide ou incompatible.")}}
+async function init(){try{db=await openDB();await migrate();$("sDate").value=$("eDate").value=today();$("rFrom").value=today().slice(0,8)+"01";$("rTo").value=today();["sQty","sPrice","sPaid"].forEach(id=>$(id).addEventListener("input",preview));await refresh()}catch(e){alert("Stockage local indisponible. Vérifie les réglages Safari.")}}
+init();
+</script></body></html>
