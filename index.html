@@ -1,70 +1,226 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#173653">
 <title>N'tiobala Glaces</title>
 <style>
-:root{--navy:#173653;--green:#167a56;--bg:#f3f6f8;--ink:#1d2b38;--muted:#71808d;--line:#e4eaf0;--red:#b7473b;--amber:#96620e}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}
-header{background:var(--navy);color:white;padding:calc(16px + env(safe-area-inset-top)) 18px 18px;position:sticky;top:0;z-index:4}.top{display:flex;justify-content:space-between;align-items:center}header h1{font-size:20px;margin:0}header p{font-size:12px;color:#d2e0eb;margin:5px 0 0}
-main{max-width:720px;margin:auto;padding:16px 14px calc(95px + env(safe-area-inset-bottom))}
-nav{position:fixed;bottom:0;left:0;right:0;z-index:8;display:flex;justify-content:space-around;background:#fff;border-top:1px solid var(--line);padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -5px 20px #142c3d0b}nav button{border:0;background:none;color:var(--muted);font-size:11px;min-width:56px;padding:4px 3px}nav button span{display:block;font-size:20px;margin-bottom:3px}nav button.active{color:var(--green);font-weight:700}
-.page{display:none}.page.active{display:block}.heading{display:flex;align-items:center;justify-content:space-between;margin:5px 2px 14px}.heading h2{font-size:21px;margin:0}.sub{color:var(--muted);font-size:12px;margin-top:4px}
-.hero{background:linear-gradient(135deg,#173653,#245777);color:#fff;border-radius:20px;padding:19px;margin-bottom:13px}.eyebrow{font-size:12px;color:#c9dbe8}.amount{font-size:32px;font-weight:800;margin:8px 0 2px}.foot{font-size:12px;color:#d5e2eb}
-.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px}.metric,.card{background:#fff;border-radius:16px;padding:15px;box-shadow:0 3px 14px #1a33450a}.metric .label{font-size:12px;color:var(--muted)}.metric strong{display:block;font-size:20px;margin-top:7px}.metric small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.card{margin-bottom:13px}.card h3{font-size:15px;margin:0 0 12px}
-.activity{display:flex;align-items:center;gap:11px;padding:12px 0;border-top:1px solid var(--line)}.bubble{width:39px;height:39px;border-radius:12px;background:#eaf2f7;display:grid;place-items:center;font-size:19px}.activity .name{font-weight:700;font-size:14px}.activity .meta{font-size:11px;color:var(--muted);margin-top:3px}.activity .value{margin-left:auto;font-weight:750;white-space:nowrap}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.action{border:0;border-radius:12px;padding:14px 10px;background:var(--green);color:#fff;font-weight:700}.action.secondary{background:#eaf2f7;color:var(--navy)}.action.light{background:#fff;color:var(--navy);border:1px solid var(--line)}
-label{display:block;font-size:12px;font-weight:700;margin:13px 0 6px;color:#455565}input,select{width:100%;border:1px solid #d7e0e8;border-radius:11px;padding:12px;background:#fff;color:var(--ink);min-height:45px}input:focus,select:focus{outline:2px solid #b8d7e8;border-color:#2876a8}.row{display:flex;gap:9px}.row>*{flex:1;min-width:0}
-.pillrow{display:flex;gap:8px}.pill{flex:1;border:1px solid var(--line);background:#fff;border-radius:11px;padding:12px 6px;color:var(--muted);font-weight:700}.pill.selected{border:2px solid var(--green);color:var(--green);background:#eff8f3}
-.totalbox{background:#eff5f8;border-radius:13px;padding:14px;margin-top:14px;display:flex;justify-content:space-between;align-items:center}.totalbox strong{font-size:20px}
-.listrow{padding:13px 0;border-top:1px solid var(--line)}.listrow .title{font-weight:700}.detail{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}.right{margin-left:auto;text-align:right}.badge{display:inline-block;font-size:10px;font-weight:700;border-radius:30px;padding:4px 8px;background:#edf2f6;color:#536473}.badge.green{background:#e8f5ee;color:var(--green)}.badge.amber{background:#fff4df;color:var(--amber)}
-.smallbtn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 10px;font-size:12px;color:var(--navy);font-weight:700;margin:8px 5px 0 0}.smallbtn.danger{color:var(--red)}.muted{font-size:12px;color:var(--muted);line-height:1.5}.empty{text-align:center;padding:22px 10px;color:var(--muted);font-size:13px}.hidden{display:none!important}.reportline{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.reportline strong{text-align:right}.dangertext{color:var(--red)}.success{color:var(--green)}
-@media(min-width:600px){main{padding-top:22px}.metrics{grid-template-columns:repeat(4,1fr)}}
+:root{--n:#173653;--g:#167a56;--bg:#f3f6f8;--ink:#1d2b38;--muted:#71808d;--line:#e4eaf0;--red:#b7473b;--amber:#96620e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+header{background:var(--n);color:white;padding:calc(16px + env(safe-area-inset-top)) 18px 18px;position:sticky;top:0;z-index:4}
+header h1{font-size:20px;margin:0}
+header p{font-size:12px;color:#d2e0eb;margin:5px 0 0}
+main{max-width:720px;margin:auto;padding:16px 14px 100px}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:8;display:flex;justify-content:space-around;background:white;border-top:1px solid var(--line);padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+nav button{border:0;background:none;color:var(--muted);font-size:11px;padding:4px}
+nav button span{display:block;font-size:20px}
+nav button.active{color:var(--g);font-weight:bold}
+.page{display:none}
+.page.active{display:block}
+.heading{display:flex;justify-content:space-between;align-items:center;margin:5px 2px 14px}
+.heading h2{font-size:21px;margin:0}
+.sub,.muted{color:var(--muted);font-size:12px;line-height:1.5}
+.hero{background:linear-gradient(135deg,#173653,#245777);color:white;border-radius:18px;padding:19px;margin-bottom:13px}
+.amount{font-size:31px;font-weight:800;margin:8px 0}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px}
+.metric,.card{background:white;border-radius:15px;padding:15px;box-shadow:0 3px 14px #1a33450a}
+.metric .label{font-size:12px;color:var(--muted)}
+.metric strong{display:block;font-size:19px;margin-top:7px}
+.card{margin-bottom:13px}
+.card h3{font-size:15px;margin:0 0 12px}
+.activity,.listrow{padding:12px 0;border-top:1px solid var(--line)}
+.activity{display:flex;align-items:center;gap:10px}
+.bubble{font-size:20px}
+.activity .value{margin-left:auto;font-weight:bold}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.action{border:0;border-radius:11px;padding:13px 9px;background:var(--g);color:white;font-weight:bold}
+.secondary{background:#eaf2f7;color:var(--n)}
+.light{background:white;color:var(--n);border:1px solid var(--line)}
+label{display:block;font-size:12px;font-weight:bold;margin:13px 0 6px;color:#455565}
+input,select{width:100%;border:1px solid #d7e0e8;border-radius:10px;padding:12px;background:white;min-height:44px;color:var(--ink)}
+.row{display:flex;gap:9px}
+.row>*{flex:1;min-width:0}
+.pillrow{display:flex;gap:8px}
+.pill{flex:1;border:1px solid var(--line);background:white;border-radius:10px;padding:11px 5px}
+.pill.selected{border:2px solid var(--g);color:var(--g);background:#eff8f3;font-weight:bold}
+.totalbox{background:#eff5f8;border-radius:12px;padding:13px;margin-top:13px;display:flex;justify-content:space-between}
+.totalbox strong{font-size:19px}
+.smallbtn{border:1px solid var(--line);background:white;border-radius:8px;padding:7px 9px;font-size:12px;color:var(--n);font-weight:bold;margin:6px 4px 0 0}
+.danger{color:var(--red)}
+.success{color:var(--g)}
+.detail{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+.title{font-weight:bold}
+.right{margin-left:auto;text-align:right}
+.badge{font-size:10px;border-radius:20px;padding:4px 7px;background:#fff4df;color:var(--amber)}
+.greenbadge{background:#e8f5ee;color:var(--g)}
+.reportline{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.reportline strong{text-align:right}
+.empty{text-align:center;padding:20px;color:var(--muted);font-size:13px}
+.hidden{display:none!important}
+@media(min-width:600px){.metrics{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
-<header><div class="top"><div><h1>N'TIOBALA GLACES</h1><p>Gestion commerciale & comptabilité</p></div><div style="font-size:25px">❄️</div></div></header>
+
+<header>
+<h1>N'TIOBALA GLACES ❄️</h1>
+<p>Gestion commerciale & comptabilité</p>
+</header>
+
 <main>
+
 <section id="home" class="page active">
-<div class="heading"><div><h2>Vue d'ensemble</h2><div class="sub" id="todayLabel"></div></div><button class="smallbtn" onclick="go('report')">Bilan ↗</button></div>
-<div class="hero"><div class="eyebrow">CHIFFRE D'AFFAIRES DU JOUR</div><div class="amount" id="homeCA">0 FCFA</div><div class="foot" id="homeCount">0 vente aujourd'hui</div></div>
+<div class="heading">
+<div><h2>Vue d'ensemble</h2><div class="sub" id="todayLabel"></div></div>
+<button class="smallbtn" onclick="go('report')">Bilan ↗</button>
+</div>
+<div class="hero">
+<div class="sub" style="color:#d5e2eb">CHIFFRE D'AFFAIRES DU JOUR</div>
+<div class="amount" id="homeCA">0 F</div>
+<div class="sub" style="color:#d5e2eb" id="homeCount">0 vente</div>
+</div>
 <div class="metrics">
-<div class="metric"><div class="label">Argent encaissé</div><strong id="homeCash">0 F</strong><small>Espèces reçues aujourd'hui</small></div>
-<div class="metric"><div class="label">Crédits clients</div><strong id="homeCredit">0 F</strong><small>Reste à récupérer</small></div>
-<div class="metric"><div class="label">Dépenses</div><strong id="homeExpense">0 F</strong><small>Sorties du jour</small></div>
-<div class="metric"><div class="label">Trésorerie du jour</div><strong id="homeBalance">0 F</strong><small>Encaissé − dépenses</small></div></div>
+<div class="metric"><div class="label">Encaissé aujourd'hui</div><strong id="homeCash">0 F</strong></div>
+<div class="metric"><div class="label">Crédits restant dus</div><strong id="homeCredit">0 F</strong></div>
+<div class="metric"><div class="label">Dépenses du jour</div><strong id="homeExpense">0 F</strong></div>
+<div class="metric"><div class="label">Trésorerie du jour</div><strong id="homeBalance">0 F</strong></div>
+</div>
 <div class="card"><h3>Mes activités</h3><div id="homeActivities"></div></div>
-<div class="card"><h3>Actions rapides</h3><div class="actions"><button class="action" onclick="go('newSale')">＋ Nouvelle vente</button><button class="action secondary" onclick="go('newExpense')">＋ Dépense</button><button class="action light" onclick="go('debts')">Clients à crédit</button><button class="action light" onclick="go('report')">Consulter les bilans</button></div></div>
+<div class="card">
+<h3>Actions rapides</h3>
+<div class="actions">
+<button class="action" onclick="go('newSale')">＋ Vente</button>
+<button class="action secondary" onclick="go('newExpense')">＋ Dépense</button>
+<button class="action light" onclick="go('debts')">Crédits clients</button>
+<button class="action light" onclick="go('history')">Historique</button>
+</div>
+</div>
 </section>
 
-<section id="newSale" class="page"><div class="heading"><div><h2>Nouvelle vente</h2><div class="sub">Vente comptant ou crédit client</div></div></div><div class="card">
-<label>Date de vente</label><input id="sDate" type="date">
-<label>Activité</label><select id="sAct"><option>Barres de glace</option><option>Sachets de glaçons</option><option>Eau glacée</option></select>
-<label>Produit / détail</label><input id="sProduct" placeholder="Ex. barre de glace, sachet 1 L...">
-<label>Client</label><input id="sClient" placeholder="Nom du client (obligatoire pour crédit)">
-<div class="row"><div><label>Quantité</label><input id="sQty" type="number" min="0.01" step="any" value="1"></div><div><label>Prix unitaire (FCFA)</label><input id="sPrice" type="number" min="1" placeholder="Prix"></div></div>
-<label>Mode de règlement</label><div class="pillrow"><button type="button" class="pill selected" id="payCash" onclick="setPay('cash')">💵 Espèces</button><button type="button" class="pill" id="payCredit" onclick="setPay('credit')">🧾 À crédit</button></div>
-<div id="initialPaidWrap" class="hidden"><label>Montant déjà versé (FCFA)</label><input id="sPaid" type="number" min="0" value="0"><div class="muted">0 si le client n'a encore rien payé.</div></div>
-<div class="totalbox"><div><div class="muted">Total de la vente</div><strong id="saleTotal">0 F</strong></div><div style="text-align:right"><div class="muted">Reste dû</div><strong id="saleDue" class="dangertext">0 F</strong></div></div>
-<button class="action" style="width:100%;margin-top:14px" onclick="addSale()">Enregistrer la vente</button></div></section>
+<section id="newSale" class="page">
+<div class="heading"><h2>Nouvelle vente</h2></div>
+<div class="card">
+<label>Date</label><input id="sDate" type="date">
+<label>Activité</label>
+<select id="sAct">
+<option>Barres de glace</option>
+<option>Sachets de glaçons</option>
+<option>Eau glacée</option>
+</select>
+<label>Produit / détail</label><input id="sProduct" placeholder="Détail du produit">
+<label>Client</label><input id="sClient" placeholder="Nom du client">
+<div class="row">
+<div><label>Quantité</label><input id="sQty" type="number" min=".01" step="any" value="1"></div>
+<div><label>Prix unitaire (FCFA)</label><input id="sPrice" type="number" min="1" placeholder="Prix"></div>
+</div>
+<label>Règlement</label>
+<div class="pillrow">
+<button type="button" class="pill selected" id="payCash" onclick="setPay('cash')">💵 Comptant</button>
+<button type="button" class="pill" id="payCredit" onclick="setPay('credit')">🧾 Crédit</button>
+</div>
+<div id="paidWrap" class="hidden">
+<label>Déjà versé (FCFA)</label><input id="sPaid" type="number" min="0" value="0">
+</div>
+<div class="totalbox">
+<div>Total<br><strong id="saleTotal">0 F</strong></div>
+<div style="text-align:right">Reste dû<br><strong id="saleDue">0 F</strong></div>
+</div>
+<button class="action" style="width:100%;margin-top:14px" onclick="addSale()">Enregistrer la vente</button>
+</div>
+</section>
 
-<section id="newExpense" class="page"><div class="heading"><div><h2>Nouvelle dépense</h2><div class="sub">Suivre les sorties d'argent</div></div></div><div class="card">
-<label>Date</label><input id="eDate" type="date"><label>Type de dépense</label><select id="eType" onchange="toggleExpenseAct()"><option value="own">Propre à une activité</option><option value="shared">Charge commune (répartie en 3)</option></select>
-<div id="expenseActWrap"><label>Activité concernée</label><select id="eAct"><option>Barres de glace</option><option>Sachets de glaçons</option><option>Eau glacée</option></select></div>
-<label>Motif / catégorie</label><input id="eLabel" placeholder="Ex. transport, entretien, emballages..."><label>Montant (FCFA)</label><input id="eAmount" type="number" min="1" placeholder="Montant payé"><button class="action" style="width:100%;margin-top:14px" onclick="addExpense()">Enregistrer la dépense</button></div></section>
+<section id="newExpense" class="page">
+<div class="heading"><h2>Nouvelle dépense</h2></div>
+<div class="card">
+<label>Date</label><input id="eDate" type="date">
+<label>Type</label>
+<select id="eType" onchange="toggleExpense()">
+<option value="own">Propre à une activité</option>
+<option value="shared">Charge commune (répartie en 3)</option>
+</select>
+<div id="eActWrap">
+<label>Activité</label>
+<select id="eAct">
+<option>Barres de glace</option>
+<option>Sachets de glaçons</option>
+<option>Eau glacée</option>
+</select>
+</div>
+<label>Motif</label><input id="eLabel" placeholder="Transport, entretien, emballages...">
+<label>Montant (FCFA)</label><input id="eAmount" type="number" min="1">
+<button class="action" style="width:100%;margin-top:14px" onclick="addExpense()">Enregistrer la dépense</button>
+</div>
+</section>
 
-<section id="debts" class="page"><div class="heading"><div><h2>Crédits clients</h2><div class="sub">Suivi des montants à récupérer</div></div></div><div class="metrics"><div class="metric"><div class="label">Total restant dû</div><strong id="debtTotal">0 F</strong></div><div class="metric"><div class="label">Clients concernés</div><strong id="debtCount">0</strong></div></div><div class="card"><h3>Créances en cours</h3><div id="debtList"></div></div><div class="card"><h3>Historique des règlements</h3><div id="paymentList"></div></div></section>
+<section id="debts" class="page">
+<div class="heading"><h2>Crédits clients</h2></div>
+<div class="metrics">
+<div class="metric"><div class="label">Total restant dû</div><strong id="debtTotal">0 F</strong></div>
+<div class="metric"><div class="label">Clients concernés</div><strong id="debtCount">0</strong></div>
+</div>
+<div class="card"><h3>Créances en cours</h3><div id="debtList"></div></div>
+<div class="card"><h3>Historique des règlements</h3><div id="paymentList"></div></div>
+</section>
 
-<section id="report" class="page"><div class="heading"><div><h2>Bilans & résultats</h2><div class="sub">Choisis la période à analyser</div></div></div><div class="card"><div class="row"><div><label>Du</label><input id="rFrom" type="date"></div><div><label>Au</label><input id="rTo" type="date"></div></div><button class="action" style="width:100%;margin-top:13px" onclick="renderAll()">Calculer</button></div><div class="card" id="reportContent"></div></section>
+<section id="report" class="page">
+<div class="heading"><h2>Bilans & résultats</h2></div>
+<div class="card">
+<div class="row">
+<div><label>Du</label><input id="rFrom" type="date"></div>
+<div><label>Au</label><input id="rTo" type="date"></div>
+</div>
+<button class="action" style="width:100%;margin-top:12px" onclick="renderAll()">Calculer</button>
+</div>
+<div class="card" id="reportContent"></div>
+</section>
 
-<section id="history" class="page"><div class="heading"><div><h2>Historique</h2><div class="sub">Ventes et dépenses récentes</div></div></div><div class="card"><h3>Ventes</h3><div id="historySales"></div></div><div class="card"><h3>Dépenses</h3><div id="historyExpenses"></div></div></section>
+<section id="history" class="page">
+<div class="heading"><h2>Historique</h2></div>
+<div class="card"><h3>Ventes</h3><div id="historySales"></div></div>
+<div class="card"><h3>Dépenses</h3><div id="historyExpenses"></div></div>
+</section>
 
-<section id="settings" class="page"><div class="heading"><div><h2>Données & sauvegardes</h2><div class="sub">Tes données restent sur cet iPhone</div></div></div><div class="card"><h3>Sauvegarder</h3><p class="muted">Exporte ventes, dépenses et règlements dans un fichier JSON à conserver dans Fichiers ou iCloud Drive.</p><button class="action" style="width:100%" onclick="backup()">Exporter une sauvegarde</button><label>Restaurer une sauvegarde</label><input id="restoreFile" type="file" accept=".json,application/json"><button class="action secondary" style="width:100%" onclick="restoreBackup()">Importer la sauvegarde</button></div><div class="card"><h3>Informations</h3><div class="reportline"><span>Stockage</span><strong>Local sur cet iPhone</strong></div><div class="reportline"><span>Paiements</span><strong>Espèces / crédit</strong></div><div class="reportline"><span>Charges communes</span><strong>1/3 par activité</strong></div><p class="muted">Fais des sauvegardes régulières. Le site hébergé ne reçoit pas les opérations comptables.</p></div></section>
+<section id="settings" class="page">
+<div class="heading"><h2>Données & sauvegardes</h2></div>
+
+<div class="card">
+<h3>Google Drive</h3>
+<p class="muted">Configure ton URL Apps Script et ton code secret. Ces valeurs sont conservées sur cet iPhone.</p>
+<label>URL de l'application Web</label>
+<input id="driveUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+<label>Code secret</label>
+<input id="driveToken" type="password" placeholder="Code secret Apps Script">
+<button class="action" style="width:100%;margin-top:12px" onclick="saveDrive()">Enregistrer les paramètres</button>
+<div class="row" style="margin-top:9px">
+<button class="action secondary" onclick="driveSend('sync')">Synchroniser</button>
+<button class="action" onclick="driveSend('backup')">☁️ Sauvegarder maintenant</button>
+</div>
+<p class="muted" id="driveStatus">Google Drive non configuré.</p>
+</div>
+
+<div class="card">
+<h3>Sauvegarde locale</h3>
+<button class="action" style="width:100%" onclick="backup()">Exporter JSON</button>
+<label>Restaurer un fichier JSON</label>
+<input id="restoreFile" type="file" accept=".json,application/json">
+<button class="action secondary" style="width:100%;margin-top:10px" onclick="restore()">Importer la sauvegarde</button>
+<p class="muted">Les données sont stockées localement sur cet iPhone.</p>
+</div>
+</section>
+
 </main>
 
-<nav><button class="active" data-page="home" onclick="go('home')"><span>⌂</span>Accueil</button><button data-page="newSale" onclick="go('newSale')"><span>＋</span>Vente</button><button data-page="debts" onclick="go('debts')"><span>▤</span>Crédits</button><button data-page="history" onclick="go('history')"><span>◷</span>Historique</button><button data-page="settings" onclick="go('settings')"><span>⚙</span>Plus</button></nav>
+<nav>
+<button class="active" data-page="home" onclick="go('home')"><span>⌂</span>Accueil</button>
+<button data-page="newSale" onclick="go('newSale')"><span>＋</span>Vente</button>
+<button data-page="debts" onclick="go('debts')"><span>▤</span>Crédits</button>
+<button data-page="history" onclick="go('history')"><span>◷</span>Historique</button>
+<button data-page="settings" onclick="go('settings')"><span>⚙</span>Plus</button>
+</nav>
 
 <script>
 "use strict";
@@ -73,42 +229,37 @@ const ACTS=["Barres de glace","Sachets de glaçons","Eau glacée"];
 const DB_NAME="ntiobala_local_v2";
 let db=null,sales=[],expenses=[],collections=[],payMode="cash",ready=false;
 const $=id=>document.getElementById(id);
-const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const today=()=>{let d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const money=n=>Math.round(Number(n)||0).toLocaleString("fr-FR")+" F";
 const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-function showError(e){
- console.error(e);
- alert("Une erreur est survenue : "+(e&&e.message?e.message:"erreur inconnue")+". Recharge la page et réessaie.");
-}
 function openDB(){
  return new Promise((resolve,reject)=>{
-  if(!window.indexedDB){reject(new Error("Le stockage local IndexedDB est indisponible dans ce navigateur"));return}
-  const request=indexedDB.open(DB_NAME,1);
-  request.onupgradeneeded=()=>{
-   const database=request.result;
-   ["sales","expenses","collections"].forEach(name=>{
-    if(!database.objectStoreNames.contains(name))database.createObjectStore(name,{keyPath:"id"});
+  if(!window.indexedDB){reject(new Error("Stockage local indisponible"));return}
+  const req=indexedDB.open(DB_NAME,1);
+  req.onupgradeneeded=()=>{
+   const d=req.result;
+   ["sales","expenses","collections"].forEach(s=>{
+    if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:"id"});
    });
   };
-  request.onsuccess=()=>{db=request.result;db.onversionchange=()=>db.close();resolve(db)};
-  request.onerror=()=>reject(request.error||new Error("Impossible d'ouvrir la base de données"));
-  request.onblocked=()=>reject(new Error("La base de données est bloquée. Ferme les autres onglets de l'application."));
+  req.onsuccess=()=>{db=req.result;resolve(db)};
+  req.onerror=()=>reject(req.error);
  });
 }
 function getAll(store){
  return new Promise((resolve,reject)=>{
-  const request=db.transaction(store,"readonly").objectStore(store).getAll();
-  request.onsuccess=()=>resolve(request.result||[]);
-  request.onerror=()=>reject(request.error);
+  const r=db.transaction(store,"readonly").objectStore(store).getAll();
+  r.onsuccess=()=>resolve(r.result||[]);
+  r.onerror=()=>reject(r.error);
  });
 }
 function put(store,item){
  return new Promise((resolve,reject)=>{
   const tx=db.transaction(store,"readwrite");
   tx.objectStore(store).put(item);
-  tx.oncomplete=()=>resolve();
-  tx.onerror=()=>reject(tx.error||new Error("Échec de l'enregistrement"));
+  tx.oncomplete=resolve;
+  tx.onerror=()=>reject(tx.error);
   tx.onabort=()=>reject(tx.error||new Error("Enregistrement annulé"));
  });
 }
@@ -116,10 +267,12 @@ function del(store,id){
  return new Promise((resolve,reject)=>{
   const tx=db.transaction(store,"readwrite");
   tx.objectStore(store).delete(id);
-  tx.oncomplete=()=>resolve();
+  tx.oncomplete=resolve;
   tx.onerror=()=>reject(tx.error);
  });
 }
+function makeId(){return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2)}
+
 async function refresh(){
  [sales,expenses,collections]=await Promise.all(["sales","expenses","collections"].map(getAll));
  sales.sort((a,b)=>b.createdAt-a.createdAt);
@@ -130,7 +283,7 @@ async function refresh(){
 function go(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  const page=$(id);
- if(!page){alert("Rubrique introuvable : "+id);return}
+ if(!page)return;
  page.classList.add("active");
  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
  if(id==="newSale")preview();
@@ -141,212 +294,243 @@ function setPay(mode){
  payMode=mode;
  $("payCash").classList.toggle("selected",mode==="cash");
  $("payCredit").classList.toggle("selected",mode==="credit");
- $("initialPaidWrap").classList.toggle("hidden",mode!=="credit");
+ $("paidWrap").classList.toggle("hidden",mode!=="credit");
  preview();
 }
 function preview(){
+ if(!$("sQty"))return;
  const total=(Number($("sQty").value)||0)*(Number($("sPrice").value)||0);
  const paid=payMode==="cash"?total:Math.min(total,Number($("sPaid").value)||0);
  $("saleTotal").textContent=money(total);
  $("saleDue").textContent=money(Math.max(0,total-paid));
 }
-function makeId(){
- return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2);
-}
+
 async function addSale(){
- if(!ready||!db){alert("L'application termine son démarrage. Attends quelques secondes et réessaie.");return}
+ if(!ready){alert("Patiente quelques secondes, l'application démarre.");return}
  try{
-  const qty=Number($("sQty").value);
-  const price=Number($("sPrice").value);
-  const total=qty*price;
-  const client=$("sClient").value.trim();
+  const qty=Number($("sQty").value),price=Number($("sPrice").value);
+  const total=qty*price,client=$("sClient").value.trim();
   const paid=payMode==="cash"?total:Number($("sPaid").value)||0;
-  if(!$("sDate").value||!Number.isFinite(qty)||qty<=0||!Number.isFinite(price)||price<=0){
-   alert("Vérifie la date, la quantité et le prix.");return;
-  }
+  if(!$("sDate").value||qty<=0||price<=0){alert("Vérifie la date, la quantité et le prix.");return}
   if(payMode==="credit"&&!client){alert("Indique le nom du client pour une vente à crédit.");return}
-  if(paid<0||paid>total){alert("Le montant versé ne peut pas dépasser le total.");return}
+  if(paid<0||paid>total){alert("Montant versé invalide.");return}
   const id=makeId();
-  const sale={id,date:$("sDate").value,act:$("sAct").value,product:$("sProduct").value.trim(),client,qty,price,total,paid,due:total-paid,payment:paid===total?"cash":paid>0?"partial":"credit",createdAt:Date.now()};
-  await put("sales",sale);
-  if(payMode==="credit"&&paid>0){
-   await put("collections",{id:"initial-"+id,saleId:id,date:sale.date,client,amount:paid,createdAt:Date.now(),note:"Versement initial"});
-  }
-  $("sProduct").value="";
-  $("sClient").value="";
-  $("sPrice").value="";
-  $("sQty").value="1";
-  $("sPaid").value="0";
+  const s={id,date:$("sDate").value,act:$("sAct").value,product:$("sProduct").value.trim(),client,qty,price,total,paid,due:total-paid,payment:paid===total?"cash":paid>0?"partial":"credit",createdAt:Date.now()};
+  await put("sales",s);
+  if(payMode==="credit"&&paid>0)await put("collections",{id:"initial-"+id,saleId:id,date:s.date,client,amount:paid,createdAt:Date.now(),note:"Versement initial"});
+  $("sProduct").value="";$("sClient").value="";$("sPrice").value="";$("sQty").value="1";$("sPaid").value="0";
   setPay("cash");
   await refresh();
   alert("Vente enregistrée avec succès.");
   go("home");
- }catch(e){showError(e)}
+ }catch(e){alert("Erreur lors de l'enregistrement : "+e.message)}
 }
+
 async function addExpense(){
- if(!ready||!db){alert("Attends le démarrage de l'application.");return}
+ if(!ready){alert("Patiente quelques secondes.");return}
  try{
   const amount=Number($("eAmount").value),label=$("eLabel").value.trim();
-  if(!$("eDate").value||!Number.isFinite(amount)||amount<=0||!label){
-   alert("Complète la date, le motif et le montant.");return;
-  }
+  if(!$("eDate").value||amount<=0||!label){alert("Complète la date, le motif et le montant.");return}
   await put("expenses",{id:makeId(),date:$("eDate").value,type:$("eType").value,act:$("eType").value==="shared"?"Commune":$("eAct").value,label,amount,createdAt:Date.now()});
-  $("eLabel").value="";
-  $("eAmount").value="";
-  await refresh();
-  alert("Dépense enregistrée.");
-  go("home");
- }catch(e){showError(e)}
+  $("eLabel").value="";$("eAmount").value="";
+  await refresh();alert("Dépense enregistrée.");go("home");
+ }catch(e){alert("Erreur : "+e.message)}
 }
-function toggleExpenseAct(){
- $("expenseActWrap").classList.toggle("hidden",$("eType").value==="shared");
-}
+function toggleExpense(){$("eActWrap").classList.toggle("hidden",$("eType").value==="shared")}
+
 async function collectDebt(id){
+ const s=sales.find(x=>x.id===id);if(!s||s.due<=0)return;
+ const v=prompt("Reste dû : "+money(s.due)+"\nMontant reçu :");
+ if(v===null)return;
+ const amount=Number(v);
+ if(!Number.isFinite(amount)||amount<=0||amount>s.due){alert("Montant invalide.");return}
+ const date=prompt("Date du règlement (AAAA-MM-JJ)",today());
+ if(!date||!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Date invalide.");return}
  try{
-  const s=sales.find(x=>x.id===id);
-  if(!s||s.due<=0)return;
-  const value=prompt("Reste dû : "+money(s.due)+"\nMontant reçu en espèces :");
-  if(value===null)return;
-  const amount=Number(value);
-  if(!Number.isFinite(amount)||amount<=0||amount>s.due){alert("Montant invalide.");return}
-  const date=prompt("Date du règlement (AAAA-MM-JJ)",today());
-  if(!date)return;
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Date invalide.");return}
   s.paid+=amount;s.due-=amount;s.payment=s.due===0?"cash":"partial";
   await put("sales",s);
   await put("collections",{id:makeId(),saleId:id,date,client:s.client,amount,createdAt:Date.now()});
   await refresh();alert("Règlement enregistré.");
- }catch(e){showError(e)}
+ }catch(e){alert("Erreur : "+e.message)}
 }
+
 async function editSale(id){
+ const s=sales.find(x=>x.id===id);if(!s)return;
+ const date=prompt("Date de vente (AAAA-MM-JJ)",s.date);if(date===null)return;
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return alert("Date invalide.");
+ const a=prompt("Activité : 1 Barres, 2 Sachets, 3 Eau",String(ACTS.indexOf(s.act)+1));if(a===null)return;
+ if(![1,2,3].includes(Number(a)))return alert("Activité invalide.");
+ const client=prompt("Nom du client",s.client||"");if(client===null)return;
+ const product=prompt("Produit / détail",s.product||"");if(product===null)return;
+ const qty=Number(prompt("Quantité",String(s.qty)));
+ const price=Number(prompt("Prix unitaire",String(s.price)));
+ if(qty<=0||price<=0)return alert("Quantité ou prix invalide.");
+ const total=qty*price;
+ if(total<s.paid)return alert("Le nouveau total est inférieur aux montants déjà encaissés.");
+ if(total>s.paid&&!client.trim())return alert("Un client est obligatoire pour un crédit.");
+ Object.assign(s,{date,act:ACTS[Number(a)-1],client:client.trim(),product:product.trim(),qty,price,total,due:total-s.paid,payment:total===s.paid?"cash":s.paid?"partial":"credit"});
  try{
-  const s=sales.find(x=>x.id===id);if(!s)return;
-  const date=prompt("Date de la vente (AAAA-MM-JJ)",s.date);if(date===null)return;
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Format de date invalide.");return}
-  const act=prompt("Activité : 1 Barres de glace, 2 Sachets de glaçons, 3 Eau glacée",String(ACTS.indexOf(s.act)+1));if(act===null)return;
-  const ai=Number(act);if(![1,2,3].includes(ai)){alert("Activité invalide.");return}
-  const client=prompt("Nom du client",s.client||"");if(client===null)return;
-  const product=prompt("Produit / détail",s.product||"");if(product===null)return;
-  const qty=Number(prompt("Quantité",String(s.qty)));if(!Number.isFinite(qty)||qty<=0){alert("Quantité invalide.");return}
-  const price=Number(prompt("Prix unitaire en FCFA",String(s.price)));if(!Number.isFinite(price)||price<=0){alert("Prix invalide.");return}
-  const total=qty*price;
-  if(s.paid>total){alert("Le nouveau total est inférieur aux montants déjà encaissés.");return}
-  if(total>s.paid&&!client.trim()){alert("Un client doit être identifié pour une vente à crédit.");return}
-  Object.assign(s,{date,act:ACTS[ai-1],client:client.trim(),product:product.trim(),qty,price,total,due:total-s.paid,payment:total===s.paid?"cash":s.paid>0?"partial":"credit"});
   await put("sales",s);
   for(const c of collections.filter(x=>x.saleId===id)){c.client=s.client;await put("collections",c)}
   await refresh();alert("Vente modifiée.");
- }catch(e){showError(e)}
+ }catch(e){alert("Erreur : "+e.message)}
 }
 async function deleteSale(id){
+ if(!confirm("Supprimer cette vente et ses règlements ?"))return;
  try{
-  if(!confirm("Supprimer définitivement cette vente et ses règlements associés ?"))return;
   for(const c of collections.filter(x=>x.saleId===id))await del("collections",c.id);
   await del("sales",id);await refresh();
- }catch(e){showError(e)}
+ }catch(e){alert("Erreur : "+e.message)}
 }
 async function deleteExpense(id){
- try{if(!confirm("Supprimer cette dépense ?"))return;await del("expenses",id);await refresh()}
- catch(e){showError(e)}
+ if(!confirm("Supprimer cette dépense ?"))return;
+ try{await del("expenses",id);await refresh()}catch(e){alert("Erreur : "+e.message)}
 }
-function cashFor(from,to){
- const direct=sales.filter(s=>s.date>=from&&s.date<=to&&s.payment==="cash").reduce((t,s)=>t+s.total,0);
- const later=collections.filter(c=>c.date>=from&&c.date<=to).reduce((t,c)=>t+c.amount,0);
- return direct+later;
+
+function cashFor(f,t){
+ return sales.filter(s=>s.date>=f&&s.date<=t&&s.payment==="cash").reduce((a,s)=>a+s.total,0)+
+ collections.filter(c=>c.date>=f&&c.date<=t).reduce((a,c)=>a+c.amount,0);
 }
 function renderHome(){
  const d=today(),ss=sales.filter(x=>x.date===d),ee=expenses.filter(x=>x.date===d);
- const ca=ss.reduce((t,x)=>t+x.total,0),cash=cashFor(d,d),exp=ee.reduce((t,x)=>t+x.amount,0),due=sales.reduce((t,x)=>t+x.due,0);
+ const cash=cashFor(d,d),exp=ee.reduce((a,x)=>a+x.amount,0);
  $("todayLabel").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
- $("homeCA").textContent=money(ca);$("homeCount").textContent=ss.length+" vente(s) aujourd'hui";
- $("homeCash").textContent=money(cash);$("homeCredit").textContent=money(due);$("homeExpense").textContent=money(exp);$("homeBalance").textContent=money(cash-exp);
+ $("homeCA").textContent=money(ss.reduce((a,x)=>a+x.total,0));
+ $("homeCount").textContent=ss.length+" vente(s) aujourd'hui";
+ $("homeCash").textContent=money(cash);
+ $("homeCredit").textContent=money(sales.reduce((a,x)=>a+x.due,0));
+ $("homeExpense").textContent=money(exp);
+ $("homeBalance").textContent=money(cash-exp);
  $("homeActivities").innerHTML=ACTS.map((a,i)=>{
   const xs=ss.filter(x=>x.act===a);
-  return '<div class="activity"><div class="bubble">'+["🧊","❄️","💧"][i]+'</div><div><div class="name">'+a+'</div><div class="meta">'+xs.length+' vente(s) aujourd’hui</div></div><div class="value">'+money(xs.reduce((t,x)=>t+x.total,0))+'</div></div>';
+  return '<div class="activity"><div class="bubble">'+["🧊","❄️","💧"][i]+'</div><div><b>'+a+'</b><div class="sub">'+xs.length+' vente(s) aujourd’hui</div></div><div class="value">'+money(xs.reduce((v,x)=>v+x.total,0))+'</div></div>';
  }).join("");
 }
-function saleActions(id){
- const encoded=encodeURIComponent(id);
- return '<button class="smallbtn" onclick="editSale(decodeURIComponent(\''+encoded+'\'))">✎ Modifier</button><button class="smallbtn danger" onclick="deleteSale(decodeURIComponent(\''+encoded+'\'))">Supprimer</button>';
+function saleButtons(id){
+ const x=encodeURIComponent(id);
+ return '<button class="smallbtn" onclick="editSale(decodeURIComponent(\''+x+'\'))">✎ Modifier</button><button class="smallbtn danger" onclick="deleteSale(decodeURIComponent(\''+x+'\'))">Supprimer</button>';
 }
 function renderDebts(){
  const open=sales.filter(x=>x.due>0);
- $("debtTotal").textContent=money(open.reduce((t,x)=>t+x.due,0));
+ $("debtTotal").textContent=money(open.reduce((a,x)=>a+x.due,0));
  $("debtCount").textContent=new Set(open.map(x=>(x.client||"").toLowerCase())).size;
- $("debtList").innerHTML=open.length?open.map(s=>'<div class="listrow"><div class="row"><div style="flex:1"><div class="title">'+safe(s.client)+'</div><div class="detail">'+safe(s.act)+' · '+safe(s.product||"Vente")+' · '+s.date+'<br>Total '+money(s.total)+' · Versé '+money(s.paid)+'</div></div><div class="right"><strong class="dangertext">'+money(s.due)+'</strong><br><span class="badge amber">À récupérer</span></div></div><button class="smallbtn" onclick="collectDebt(decodeURIComponent(\''+encodeURIComponent(s.id)+'\'))">＋ Encaisser un règlement</button>'+saleActions(s.id)+'</div>').join(""):'<div class="empty">Aucun crédit client en cours 🎉</div>';
- $("paymentList").innerHTML=collections.length?collections.map(c=>'<div class="listrow"><div class="row"><div style="flex:1"><div class="title">'+safe(c.client)+'</div><div class="detail">'+c.date+(c.note?" · "+safe(c.note):"")+'</div></div><strong class="success">+'+money(c.amount)+'</strong></div></div>').join(""):'<div class="empty">Aucun règlement enregistré.</div>';
+ $("debtList").innerHTML=open.length?open.map(s=>'<div class="listrow"><div class="row"><div style="flex:1"><b>'+safe(s.client)+'</b><div class="detail">'+safe(s.act)+' · '+safe(s.product||"Vente")+' · '+s.date+'<br>Total '+money(s.total)+' · Versé '+money(s.paid)+'</div></div><div class="right"><b class="danger">'+money(s.due)+'</b></div></div><button class="smallbtn" onclick="collectDebt(decodeURIComponent(\''+encodeURIComponent(s.id)+'\'))">＋ Encaisser</button>'+saleButtons(s.id)+'</div>').join(""):'<div class="empty">Aucun crédit en cours 🎉</div>';
+ $("paymentList").innerHTML=collections.length?collections.map(c=>'<div class="listrow"><b>'+safe(c.client)+'</b><div class="detail">'+c.date+' · <span class="success">+'+money(c.amount)+'</span></div></div>').join(""):'<div class="empty">Aucun règlement.</div>';
 }
 function renderHistory(){
- $("historySales").innerHTML=sales.length?sales.slice(0,100).map(s=>'<div class="listrow"><div class="row"><div style="flex:1"><div class="title">'+safe(s.act)+' · '+money(s.total)+'</div><div class="detail">'+s.date+' · '+safe(s.client||"Client comptant")+' · '+safe(s.product||"")+'<br>Quantité '+s.qty+' · Prix unitaire '+money(s.price)+' · Encaissé '+money(s.paid)+'</div><span class="badge '+(s.due>0?"amber":"green")+'">'+(s.due>0?"Reste dû "+money(s.due):"Réglée")+'</span></div></div>'+saleActions(s.id)+'</div>').join(""):'<div class="empty">Aucune vente enregistrée.</div>';
- $("historyExpenses").innerHTML=expenses.length?expenses.slice(0,100).map(e=>'<div class="listrow"><div class="row"><div style="flex:1"><div class="title">'+safe(e.label)+' · '+money(e.amount)+'</div><div class="detail">'+e.date+' · '+(e.type==="shared"?"Charge commune":safe(e.act))+'</div></div><button class="smallbtn danger" onclick="deleteExpense(decodeURIComponent(\''+encodeURIComponent(e.id)+'\'))">Supprimer</button></div></div>').join(""):'<div class="empty">Aucune dépense enregistrée.</div>';
+ $("historySales").innerHTML=sales.length?sales.slice(0,150).map(s=>'<div class="listrow"><div class="title">'+safe(s.act)+' · '+money(s.total)+'</div><div class="detail">'+s.date+' · '+safe(s.client||"Client comptant")+' · '+safe(s.product||"")+'<br>Qté '+s.qty+' · PU '+money(s.price)+' · Encaissé '+money(s.paid)+' · '+(s.due?'<span class="danger">Reste '+money(s.due)+'</span>':'Réglée')+'</div>'+saleButtons(s.id)+'</div>').join(""):'<div class="empty">Aucune vente.</div>';
+ $("historyExpenses").innerHTML=expenses.length?expenses.slice(0,150).map(e=>'<div class="listrow"><div class="row"><div style="flex:1"><b>'+safe(e.label)+' · '+money(e.amount)+'</b><div class="detail">'+e.date+' · '+(e.type==="shared"?"Charge commune":safe(e.act))+'</div></div><button class="smallbtn danger" onclick="deleteExpense(decodeURIComponent(\''+encodeURIComponent(e.id)+'\'))">Supprimer</button></div></div>').join(""):'<div class="empty">Aucune dépense.</div>';
 }
-function line(a,b,bold=false){
- return '<div class="reportline"><span>'+(bold?'<b>'+a+'</b>':a)+'</span><strong>'+(bold?'<b>'+b+'</b>':b)+'</strong></div>';
-}
+function line(a,b,bold=false){return '<div class="reportline"><span>'+(bold?'<b>'+a+'</b>':a)+'</span><strong>'+(bold?'<b>'+b+'</b>':b)+'</strong></div>'}
 function renderReport(){
  const f=$("rFrom").value||"0000-01-01",t=$("rTo").value||"9999-12-31";
  const ss=sales.filter(x=>x.date>=f&&x.date<=t),ee=expenses.filter(x=>x.date>=f&&x.date<=t);
  const ca=ss.reduce((a,x)=>a+x.total,0),cash=cashFor(f,t),due=ss.reduce((a,x)=>a+x.due,0);
- const own=ee.filter(x=>x.type==="own").reduce((a,x)=>a+x.amount,0),shared=ee.filter(x=>x.type==="shared").reduce((a,x)=>a+x.amount,0),spent=own+shared;
- let html='<div class="muted">Période : '+f+' au '+t+'</div>'+line("Chiffre d’affaires",money(ca))+line("Encaissements en espèces",money(cash))+line("Crédits restant dus",money(due))+line("Dépenses propres",money(own))+line("Charges communes",money(shared))+line("Dépenses totales",money(spent))+line("Résultat commercial",money(ca-spent),true)+'<h3 style="margin:20px 0 8px">Résultat par activité</h3>';
+ const own=ee.filter(x=>x.type==="own").reduce((a,x)=>a+x.amount,0),shared=ee.filter(x=>x.type==="shared").reduce((a,x)=>a+x.amount,0);
+ let h='<div class="sub">Période : '+f+' au '+t+'</div>'+line("Chiffre d’affaires",money(ca))+line("Encaissements",money(cash))+line("Crédits restant dus",money(due))+line("Dépenses propres",money(own))+line("Charges communes",money(shared))+line("Dépenses totales",money(own+shared))+line("Résultat commercial",money(ca-own-shared),true)+'<h3 style="margin:18px 0 8px">Résultat par activité</h3>';
  for(const a of ACTS){
   const ac=ss.filter(x=>x.act===a).reduce((v,x)=>v+x.total,0),ex=ee.filter(x=>x.type==="own"&&x.act===a).reduce((v,x)=>v+x.amount,0);
-  html+='<div class="listrow"><b>'+a+'</b>'+line("Chiffre d’affaires",money(ac))+line("Dépenses propres",money(ex))+line("Part charges communes",money(shared/3))+line("Résultat",money(ac-ex-shared/3),true)+'</div>';
+  h+='<div class="listrow"><b>'+a+'</b>'+line("Chiffre d’affaires",money(ac))+line("Dépenses propres",money(ex))+line("Part des charges communes",money(shared/3))+line("Résultat",money(ac-ex-shared/3),true)+'</div>';
  }
- $("reportContent").innerHTML=html;
+ $("reportContent").innerHTML=h;
 }
-function renderAll(){
- if(!db)return;
- renderHome();renderDebts();renderHistory();renderReport();
+function renderAll(){if(!db)return;renderHome();renderDebts();renderHistory();renderReport()}
+
+function snapshot(){
+ return {app:"NtiobalaGlaces",version:2,exportedAt:new Date().toISOString(),sales,expenses,collections};
 }
 function backup(){
- const data={app:"NtiobalaGlaces",version:2,exportedAt:new Date().toISOString(),sales,expenses,collections};
- const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
- const url=URL.createObjectURL(blob),a=document.createElement("a");
+ const blob=new Blob([JSON.stringify(snapshot(),null,2)],{type:"application/json"});
+ const a=document.createElement("a"),url=URL.createObjectURL(blob);
  a.href=url;a.download="ntiobala-sauvegarde-"+today()+".json";a.click();
- setTimeout(()=>URL.revokeObjectURL(url),1500);
+ setTimeout(()=>URL.revokeObjectURL(url),1200);
 }
-async function restoreBackup(){
+async function restore(){
+ const file=$("restoreFile").files[0];
+ if(!file)return alert("Choisis un fichier JSON.");
+ if(!confirm("La restauration remplacera les données actuelles. Continuer ?"))return;
  try{
-  const file=$("restoreFile").files[0];
-  if(!file){alert("Choisis un fichier JSON.");return}
-  if(!confirm("La restauration remplacera les données présentes. Continuer ?"))return;
-  const data=JSON.parse(await file.text());
-  if(!Array.isArray(data.sales)||!Array.isArray(data.expenses))throw new Error("Fichier incompatible");
+  const x=JSON.parse(await file.text());
+  if(!Array.isArray(x.sales)||!Array.isArray(x.expenses))throw new Error("Fichier incompatible");
   const tx=db.transaction(["sales","expenses","collections"],"readwrite");
   ["sales","expenses","collections"].forEach(s=>tx.objectStore(s).clear());
-  data.sales.forEach(s=>tx.objectStore("sales").put(s));
-  data.expenses.forEach(e=>tx.objectStore("expenses").put(e));
-  (data.collections||[]).forEach(c=>tx.objectStore("collections").put(c));
+  x.sales.forEach(v=>tx.objectStore("sales").put(v));
+  x.expenses.forEach(v=>tx.objectStore("expenses").put(v));
+  (x.collections||[]).forEach(v=>tx.objectStore("collections").put(v));
   tx.oncomplete=async()=>{await refresh();alert("Sauvegarde restaurée.")};
   tx.onerror=()=>alert("Erreur de restauration.");
- }catch(e){showError(e)}
+ }catch(e){alert("Fichier JSON invalide : "+e.message)}
 }
-async function migrate(){
- if(localStorage.getItem("nt_v2_migrated"))return;
- let oldSales=[],oldExpenses=[];
- try{oldSales=JSON.parse(localStorage.getItem("nt_sales")||"[]");oldExpenses=JSON.parse(localStorage.getItem("nt_expenses")||"[]")}catch(e){}
- for(const x of oldSales)await put("sales",{...x,id:"legacy-"+x.id,paid:Number(x.total)||0,due:0,payment:"cash",createdAt:Number(x.id)||Date.now()});
- for(const x of oldExpenses)await put("expenses",{...x,id:"legacy-"+x.id,createdAt:Number(x.id)||Date.now()});
- localStorage.setItem("nt_v2_migrated","1");
+
+/* GOOGLE DRIVE : SAUVEGARDE MANUELLE */
+function driveConfig(){
+ return {
+  url:localStorage.getItem("nti_drive_url")||"",
+  token:localStorage.getItem("nti_drive_token")||""
+ };
 }
+function saveDrive(){
+ const url=$("driveUrl").value.trim();
+ const token=$("driveToken").value.trim();
+ if(!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(url)){
+  alert("URL invalide. Elle doit se terminer par /exec.");
+  return;
+ }
+ if(token.length<30){alert("Vérifie le code secret.");return}
+ localStorage.setItem("nti_drive_url",url);
+ localStorage.setItem("nti_drive_token",token);
+ $("driveStatus").textContent="Paramètres enregistrés sur cet iPhone.";
+ alert("Paramètres Google Drive enregistrés.");
+}
+async function driveSend(action="backup"){
+ const config=driveConfig();
+ if(!config.url||!config.token){
+  alert("Renseigne d'abord l'URL Apps Script et le code secret.");
+  return;
+ }
+ try{
+  await refresh();
+  const payload={
+   app:"NtiobalaGlaces",
+   token:config.token,
+   action:action,
+   snapshot:snapshot()
+  };
+  $("driveStatus").textContent="Envoi en cours…";
+  await fetch(config.url,{
+   method:"POST",
+   mode:"no-cors",
+   headers:{"Content-Type":"text/plain;charset=utf-8"},
+   body:JSON.stringify(payload)
+  });
+  $("driveStatus").textContent="Demande envoyée. Vérifie le fichier dans Google Drive.";
+  alert("Demande envoyée. Vérifie dans Google Drive que Ntiobala_DERNIERE_COPIE.json a été actualisé.");
+ }catch(e){
+  $("driveStatus").textContent="Échec de l'envoi. Vérifie Internet et l'URL.";
+  alert("Envoi impossible : "+e.message);
+ }
+}
+
 async function init(){
  try{
   await openDB();
-  await migrate();
-  $("sDate").value=today();$("eDate").value=today();
-  $("rFrom").value=today().slice(0,8)+"01";$("rTo").value=today();
+  $("sDate").value=today();
+  $("eDate").value=today();
+  $("rFrom").value=today().slice(0,8)+"01";
+  $("rTo").value=today();
   ["sQty","sPrice","sPaid"].forEach(id=>$(id).addEventListener("input",preview));
+  const config=driveConfig();
+  $("driveUrl").value=config.url;
+  $("driveToken").value=config.token;
   await refresh();
   ready=true;
   preview();
  }catch(e){
-  console.error(e);
-  alert("Impossible d'initialiser le stockage de l'application : "+(e.message||e));
+  alert("Impossible de démarrer le stockage local : "+e.message+". Ouvre l'application dans Safari.");
  }
 }
-window.addEventListener("error",event=>{console.error(event.error)});
-window.addEventListener("unhandledrejection",event=>{console.error(event.reason);alert("Erreur de l'application : "+(event.reason?.message||event.reason))});
+window.addEventListener("error",e=>console.error("Erreur JavaScript :",e.error));
+window.addEventListener("unhandledrejection",e=>alert("Erreur : "+(e.reason?.message||e.reason)));
 init();
 </script>
 </body>
