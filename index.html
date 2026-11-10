@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -189,7 +190,7 @@ input,select{width:100%;border:1px solid #d7e0e8;border-radius:10px;padding:12px
 
 <div class="card">
 <h3>Google Drive</h3>
-<p class="muted">Configure ton URL Apps Script et ton code secret. Ces valeurs sont conservées sur cet iPhone.</p>
+<p class="muted">Configure ton URL Apps Script et ton code secret. Ces valeurs sont conservées sur cet appareil.</p>
 <label>URL de l'application Web</label>
 <input id="driveUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec">
 <label>Code secret</label>
@@ -208,7 +209,7 @@ input,select{width:100%;border:1px solid #d7e0e8;border-radius:10px;padding:12px
 <label>Restaurer un fichier JSON</label>
 <input id="restoreFile" type="file" accept=".json,application/json">
 <button class="action secondary" style="width:100%;margin-top:10px" onclick="restore()">Importer la sauvegarde</button>
-<p class="muted">Les données sont stockées localement sur cet iPhone.</p>
+<p class="muted">Les données sont stockées localement sur cet appareil.</p>
 </div>
 </section>
 
@@ -247,6 +248,7 @@ function openDB(){
   req.onerror=()=>reject(req.error);
  });
 }
+
 function getAll(store){
  return new Promise((resolve,reject)=>{
   const r=db.transaction(store,"readonly").objectStore(store).getAll();
@@ -254,8 +256,11 @@ function getAll(store){
   r.onerror=()=>reject(r.error);
  });
 }
+
 function put(store,item){
  return new Promise((resolve,reject)=>{
+  // Date de dernière modification pour départager les modifications.
+  item={...item,updatedAt:Date.now()};
   const tx=db.transaction(store,"readwrite");
   tx.objectStore(store).put(item);
   tx.oncomplete=resolve;
@@ -263,7 +268,13 @@ function put(store,item){
   tx.onabort=()=>reject(tx.error||new Error("Enregistrement annulé"));
  });
 }
+
 function del(store,id){
+ const deleted=JSON.parse(localStorage.getItem("nti_deleted")||"[]");
+ if(!deleted.some(x=>x.store===store&&String(x.id)===String(id))){
+  deleted.push({store,id:String(id),deletedAt:Date.now()});
+ }
+ localStorage.setItem("nti_deleted",JSON.stringify(deleted));
  return new Promise((resolve,reject)=>{
   const tx=db.transaction(store,"readwrite");
   tx.objectStore(store).delete(id);
@@ -271,25 +282,34 @@ function del(store,id){
   tx.onerror=()=>reject(tx.error);
  });
 }
-function makeId(){return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2)}
+
+function makeId(){
+ return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2);
+}
 
 async function refresh(){
- [sales,expenses,collections]=await Promise.all(["sales","expenses","collections"].map(getAll));
+ [sales,expenses,collections]=await Promise.all(
+  ["sales","expenses","collections"].map(getAll)
+ );
  sales.sort((a,b)=>b.createdAt-a.createdAt);
  expenses.sort((a,b)=>b.createdAt-a.createdAt);
  collections.sort((a,b)=>b.createdAt-a.createdAt);
  renderAll();
 }
+
 function go(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  const page=$(id);
  if(!page)return;
  page.classList.add("active");
- document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+ document.querySelectorAll("nav button").forEach(
+  b=>b.classList.toggle("active",b.dataset.page===id)
+ );
  if(id==="newSale")preview();
  renderAll();
  window.scrollTo(0,0);
 }
+
 function setPay(mode){
  payMode=mode;
  $("payCash").classList.toggle("selected",mode==="cash");
@@ -297,6 +317,7 @@ function setPay(mode){
  $("paidWrap").classList.toggle("hidden",mode!=="credit");
  preview();
 }
+
 function preview(){
  if(!$("sQty"))return;
  const total=(Number($("sQty").value)||0)*(Number($("sPrice").value)||0);
@@ -308,229 +329,640 @@ function preview(){
 async function addSale(){
  if(!ready){alert("Patiente quelques secondes, l'application démarre.");return}
  try{
-  const qty=Number($("sQty").value),price=Number($("sPrice").value);
-  const total=qty*price,client=$("sClient").value.trim();
+  const qty=Number($("sQty").value);
+  const price=Number($("sPrice").value);
+  const total=qty*price;
+  const client=$("sClient").value.trim();
   const paid=payMode==="cash"?total:Number($("sPaid").value)||0;
-  if(!$("sDate").value||qty<=0||price<=0){alert("Vérifie la date, la quantité et le prix.");return}
-  if(payMode==="credit"&&!client){alert("Indique le nom du client pour une vente à crédit.");return}
-  if(paid<0||paid>total){alert("Montant versé invalide.");return}
+
+  if(!$("sDate").value||qty<=0||price<=0){
+   alert("Vérifie la date, la quantité et le prix.");return;
+  }
+  if(payMode==="credit"&&!client){
+   alert("Indique le nom du client pour une vente à crédit.");return;
+  }
+  if(paid<0||paid>total){
+   alert("Montant versé invalide.");return;
+  }
+
   const id=makeId();
-  const s={id,date:$("sDate").value,act:$("sAct").value,product:$("sProduct").value.trim(),client,qty,price,total,paid,due:total-paid,payment:paid===total?"cash":paid>0?"partial":"credit",createdAt:Date.now()};
+  const s={
+   id,date:$("sDate").value,act:$("sAct").value,
+   product:$("sProduct").value.trim(),client,qty,price,total,
+   paid,due:total-paid,
+   payment:paid===total?"cash":paid>0?"partial":"credit",
+   createdAt:Date.now()
+  };
+
   await put("sales",s);
-  if(payMode==="credit"&&paid>0)await put("collections",{id:"initial-"+id,saleId:id,date:s.date,client,amount:paid,createdAt:Date.now(),note:"Versement initial"});
-  $("sProduct").value="";$("sClient").value="";$("sPrice").value="";$("sQty").value="1";$("sPaid").value="0";
+
+  if(payMode==="credit"&&paid>0){
+   await put("collections",{
+    id:"initial-"+id,saleId:id,date:s.date,client,
+    amount:paid,createdAt:Date.now(),note:"Versement initial"
+   });
+  }
+
+  $("sProduct").value="";
+  $("sClient").value="";
+  $("sPrice").value="";
+  $("sQty").value="1";
+  $("sPaid").value="0";
+
   setPay("cash");
   await refresh();
   alert("Vente enregistrée avec succès.");
   go("home");
- }catch(e){alert("Erreur lors de l'enregistrement : "+e.message)}
+
+ }catch(e){
+  alert("Erreur lors de l'enregistrement : "+e.message);
+ }
 }
 
 async function addExpense(){
  if(!ready){alert("Patiente quelques secondes.");return}
  try{
-  const amount=Number($("eAmount").value),label=$("eLabel").value.trim();
-  if(!$("eDate").value||amount<=0||!label){alert("Complète la date, le motif et le montant.");return}
-  await put("expenses",{id:makeId(),date:$("eDate").value,type:$("eType").value,act:$("eType").value==="shared"?"Commune":$("eAct").value,label,amount,createdAt:Date.now()});
-  $("eLabel").value="";$("eAmount").value="";
-  await refresh();alert("Dépense enregistrée.");go("home");
- }catch(e){alert("Erreur : "+e.message)}
+  const amount=Number($("eAmount").value);
+  const label=$("eLabel").value.trim();
+
+  if(!$("eDate").value||amount<=0||!label){
+   alert("Complète la date, le motif et le montant.");return;
+  }
+
+  await put("expenses",{
+   id:makeId(),date:$("eDate").value,
+   type:$("eType").value,
+   act:$("eType").value==="shared"?"Commune":$("eAct").value,
+   label,amount,createdAt:Date.now()
+  });
+
+  $("eLabel").value="";
+  $("eAmount").value="";
+  await refresh();
+  alert("Dépense enregistrée.");
+  go("home");
+
+ }catch(e){
+  alert("Erreur : "+e.message);
+ }
 }
-function toggleExpense(){$("eActWrap").classList.toggle("hidden",$("eType").value==="shared")}
+
+function toggleExpense(){
+ $("eActWrap").classList.toggle("hidden",$("eType").value==="shared");
+}
 
 async function collectDebt(id){
- const s=sales.find(x=>x.id===id);if(!s||s.due<=0)return;
+ const s=sales.find(x=>x.id===id);
+ if(!s||s.due<=0)return;
+
  const v=prompt("Reste dû : "+money(s.due)+"\nMontant reçu :");
  if(v===null)return;
+
  const amount=Number(v);
- if(!Number.isFinite(amount)||amount<=0||amount>s.due){alert("Montant invalide.");return}
+ if(!Number.isFinite(amount)||amount<=0||amount>s.due){
+  alert("Montant invalide.");return;
+ }
+
  const date=prompt("Date du règlement (AAAA-MM-JJ)",today());
- if(!date||!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert("Date invalide.");return}
+ if(!date||!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+  alert("Date invalide.");return;
+ }
+
  try{
-  s.paid+=amount;s.due-=amount;s.payment=s.due===0?"cash":"partial";
+  s.paid+=amount;
+  s.due-=amount;
+  s.payment=s.due===0?"cash":"partial";
+
   await put("sales",s);
-  await put("collections",{id:makeId(),saleId:id,date,client:s.client,amount,createdAt:Date.now()});
-  await refresh();alert("Règlement enregistré.");
- }catch(e){alert("Erreur : "+e.message)}
+  await put("collections",{
+   id:makeId(),saleId:id,date,client:s.client,
+   amount,createdAt:Date.now()
+  });
+
+  await refresh();
+  alert("Règlement enregistré.");
+
+ }catch(e){
+  alert("Erreur : "+e.message);
+ }
 }
 
 async function editSale(id){
- const s=sales.find(x=>x.id===id);if(!s)return;
- const date=prompt("Date de vente (AAAA-MM-JJ)",s.date);if(date===null)return;
- if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return alert("Date invalide.");
- const a=prompt("Activité : 1 Barres, 2 Sachets, 3 Eau",String(ACTS.indexOf(s.act)+1));if(a===null)return;
- if(![1,2,3].includes(Number(a)))return alert("Activité invalide.");
- const client=prompt("Nom du client",s.client||"");if(client===null)return;
- const product=prompt("Produit / détail",s.product||"");if(product===null)return;
+ const s=sales.find(x=>x.id===id);
+ if(!s)return;
+
+ const date=prompt("Date de vente (AAAA-MM-JJ)",s.date);
+ if(date===null)return;
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+  alert("Date invalide.");return;
+ }
+
+ const a=prompt("Activité : 1 Barres, 2 Sachets, 3 Eau",String(ACTS.indexOf(s.act)+1));
+ if(a===null)return;
+ if(![1,2,3].includes(Number(a))){
+  alert("Activité invalide.");return;
+ }
+
+ const client=prompt("Nom du client",s.client||"");
+ if(client===null)return;
+
+ const product=prompt("Produit / détail",s.product||"");
+ if(product===null)return;
+
  const qty=Number(prompt("Quantité",String(s.qty)));
  const price=Number(prompt("Prix unitaire",String(s.price)));
- if(qty<=0||price<=0)return alert("Quantité ou prix invalide.");
+
+ if(qty<=0||price<=0){
+  alert("Quantité ou prix invalide.");return;
+ }
+
  const total=qty*price;
- if(total<s.paid)return alert("Le nouveau total est inférieur aux montants déjà encaissés.");
- if(total>s.paid&&!client.trim())return alert("Un client est obligatoire pour un crédit.");
- Object.assign(s,{date,act:ACTS[Number(a)-1],client:client.trim(),product:product.trim(),qty,price,total,due:total-s.paid,payment:total===s.paid?"cash":s.paid?"partial":"credit"});
+ if(total<s.paid){
+  alert("Le nouveau total est inférieur aux montants déjà encaissés.");return;
+ }
+ if(total>s.paid&&!client.trim()){
+  alert("Un client est obligatoire pour un crédit.");return;
+ }
+
+ Object.assign(s,{
+  date,act:ACTS[Number(a)-1],client:client.trim(),
+  product:product.trim(),qty,price,total,
+  due:total-s.paid,
+  payment:total===s.paid?"cash":s.paid?"partial":"credit"
+ });
+
  try{
   await put("sales",s);
-  for(const c of collections.filter(x=>x.saleId===id)){c.client=s.client;await put("collections",c)}
-  await refresh();alert("Vente modifiée.");
- }catch(e){alert("Erreur : "+e.message)}
+  for(const c of collections.filter(x=>x.saleId===id)){
+   c.client=s.client;
+   await put("collections",c);
+  }
+  await refresh();
+  alert("Vente modifiée.");
+ }catch(e){
+  alert("Erreur : "+e.message);
+ }
 }
+
 async function deleteSale(id){
  if(!confirm("Supprimer cette vente et ses règlements ?"))return;
  try{
-  for(const c of collections.filter(x=>x.saleId===id))await del("collections",c.id);
-  await del("sales",id);await refresh();
- }catch(e){alert("Erreur : "+e.message)}
+  for(const c of collections.filter(x=>x.saleId===id)){
+   await del("collections",c.id);
+  }
+  await del("sales",id);
+  await refresh();
+ }catch(e){
+  alert("Erreur : "+e.message);
+ }
 }
+
 async function deleteExpense(id){
  if(!confirm("Supprimer cette dépense ?"))return;
- try{await del("expenses",id);await refresh()}catch(e){alert("Erreur : "+e.message)}
+ try{
+  await del("expenses",id);
+  await refresh();
+ }catch(e){
+  alert("Erreur : "+e.message);
+ }
 }
 
 function cashFor(f,t){
- return sales.filter(s=>s.date>=f&&s.date<=t&&s.payment==="cash").reduce((a,s)=>a+s.total,0)+
- collections.filter(c=>c.date>=f&&c.date<=t).reduce((a,c)=>a+c.amount,0);
+ return sales.filter(s=>s.date>=f&&s.date<=t&&s.payment==="cash")
+  .reduce((a,s)=>a+s.total,0)+
+  collections.filter(c=>c.date>=f&&c.date<=t)
+  .reduce((a,c)=>a+c.amount,0);
 }
+
 function renderHome(){
- const d=today(),ss=sales.filter(x=>x.date===d),ee=expenses.filter(x=>x.date===d);
- const cash=cashFor(d,d),exp=ee.reduce((a,x)=>a+x.amount,0);
- $("todayLabel").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+ const d=today();
+ const ss=sales.filter(x=>x.date===d);
+ const ee=expenses.filter(x=>x.date===d);
+ const cash=cashFor(d,d);
+ const exp=ee.reduce((a,x)=>a+x.amount,0);
+
+ $("todayLabel").textContent=new Date().toLocaleDateString("fr-FR",{
+  weekday:"long",day:"numeric",month:"long",year:"numeric"
+ });
  $("homeCA").textContent=money(ss.reduce((a,x)=>a+x.total,0));
  $("homeCount").textContent=ss.length+" vente(s) aujourd'hui";
  $("homeCash").textContent=money(cash);
  $("homeCredit").textContent=money(sales.reduce((a,x)=>a+x.due,0));
  $("homeExpense").textContent=money(exp);
  $("homeBalance").textContent=money(cash-exp);
+
  $("homeActivities").innerHTML=ACTS.map((a,i)=>{
   const xs=ss.filter(x=>x.act===a);
-  return '<div class="activity"><div class="bubble">'+["🧊","❄️","💧"][i]+'</div><div><b>'+a+'</b><div class="sub">'+xs.length+' vente(s) aujourd’hui</div></div><div class="value">'+money(xs.reduce((v,x)=>v+x.total,0))+'</div></div>';
+  return '<div class="activity"><div class="bubble">'+
+   ["🧊","❄️","💧"][i]+'</div><div><b>'+a+
+   '</b><div class="sub">'+xs.length+
+   ' vente(s) aujourd’hui</div></div><div class="value">'+
+   money(xs.reduce((v,x)=>v+x.total,0))+'</div></div>';
  }).join("");
 }
+
 function saleButtons(id){
  const x=encodeURIComponent(id);
- return '<button class="smallbtn" onclick="editSale(decodeURIComponent(\''+x+'\'))">✎ Modifier</button><button class="smallbtn danger" onclick="deleteSale(decodeURIComponent(\''+x+'\'))">Supprimer</button>';
+ return '<button class="smallbtn" onclick="editSale(decodeURIComponent(\''+
+  x+'\'))">✎ Modifier</button><button class="smallbtn danger" onclick="deleteSale(decodeURIComponent(\''+
+  x+'\'))">Supprimer</button>';
 }
+
 function renderDebts(){
  const open=sales.filter(x=>x.due>0);
+
  $("debtTotal").textContent=money(open.reduce((a,x)=>a+x.due,0));
  $("debtCount").textContent=new Set(open.map(x=>(x.client||"").toLowerCase())).size;
- $("debtList").innerHTML=open.length?open.map(s=>'<div class="listrow"><div class="row"><div style="flex:1"><b>'+safe(s.client)+'</b><div class="detail">'+safe(s.act)+' · '+safe(s.product||"Vente")+' · '+s.date+'<br>Total '+money(s.total)+' · Versé '+money(s.paid)+'</div></div><div class="right"><b class="danger">'+money(s.due)+'</b></div></div><button class="smallbtn" onclick="collectDebt(decodeURIComponent(\''+encodeURIComponent(s.id)+'\'))">＋ Encaisser</button>'+saleButtons(s.id)+'</div>').join(""):'<div class="empty">Aucun crédit en cours 🎉</div>';
- $("paymentList").innerHTML=collections.length?collections.map(c=>'<div class="listrow"><b>'+safe(c.client)+'</b><div class="detail">'+c.date+' · <span class="success">+'+money(c.amount)+'</span></div></div>').join(""):'<div class="empty">Aucun règlement.</div>';
+
+ $("debtList").innerHTML=open.length?open.map(s=>
+  '<div class="listrow"><div class="row"><div style="flex:1"><b>'+
+  safe(s.client)+'</b><div class="detail">'+safe(s.act)+' · '+
+  safe(s.product||"Vente")+' · '+s.date+'<br>Total '+
+  money(s.total)+' · Versé '+money(s.paid)+'</div></div><div class="right"><b class="danger">'+
+  money(s.due)+'</b></div></div><button class="smallbtn" onclick="collectDebt(decodeURIComponent(\''+
+  encodeURIComponent(s.id)+'\'))">＋ Encaisser</button>'+saleButtons(s.id)+'</div>'
+ ).join(""):'<div class="empty">Aucun crédit en cours 🎉</div>';
+
+ $("paymentList").innerHTML=collections.length?collections.map(c=>
+  '<div class="listrow"><b>'+safe(c.client)+'</b><div class="detail">'+
+  c.date+' · <span class="success">+'+money(c.amount)+
+  '</span></div></div>'
+ ).join(""):'<div class="empty">Aucun règlement.</div>';
 }
+
 function renderHistory(){
- $("historySales").innerHTML=sales.length?sales.slice(0,150).map(s=>'<div class="listrow"><div class="title">'+safe(s.act)+' · '+money(s.total)+'</div><div class="detail">'+s.date+' · '+safe(s.client||"Client comptant")+' · '+safe(s.product||"")+'<br>Qté '+s.qty+' · PU '+money(s.price)+' · Encaissé '+money(s.paid)+' · '+(s.due?'<span class="danger">Reste '+money(s.due)+'</span>':'Réglée')+'</div>'+saleButtons(s.id)+'</div>').join(""):'<div class="empty">Aucune vente.</div>';
- $("historyExpenses").innerHTML=expenses.length?expenses.slice(0,150).map(e=>'<div class="listrow"><div class="row"><div style="flex:1"><b>'+safe(e.label)+' · '+money(e.amount)+'</b><div class="detail">'+e.date+' · '+(e.type==="shared"?"Charge commune":safe(e.act))+'</div></div><button class="smallbtn danger" onclick="deleteExpense(decodeURIComponent(\''+encodeURIComponent(e.id)+'\'))">Supprimer</button></div></div>').join(""):'<div class="empty">Aucune dépense.</div>';
+ $("historySales").innerHTML=sales.length?sales.slice(0,150).map(s=>
+  '<div class="listrow"><div class="title">'+safe(s.act)+' · '+
+  money(s.total)+'</div><div class="detail">'+s.date+' · '+
+  safe(s.client||"Client comptant")+' · '+safe(s.product||"")+
+  '<br>Qté '+s.qty+' · PU '+money(s.price)+' · Encaissé '+
+  money(s.paid)+' · '+(s.due?'<span class="danger">Reste '+
+  money(s.due)+'</span>':'Réglée')+'</div>'+saleButtons(s.id)+'</div>'
+ ).join(""):'<div class="empty">Aucune vente.</div>';
+
+ $("historyExpenses").innerHTML=expenses.length?expenses.slice(0,150).map(e=>
+  '<div class="listrow"><div class="row"><div style="flex:1"><b>'+
+  safe(e.label)+' · '+money(e.amount)+'</b><div class="detail">'+
+  e.date+' · '+(e.type==="shared"?"Charge commune":safe(e.act))+
+  '</div></div><button class="smallbtn danger" onclick="deleteExpense(decodeURIComponent(\''+
+  encodeURIComponent(e.id)+'\'))">Supprimer</button></div></div>'
+ ).join(""):'<div class="empty">Aucune dépense.</div>';
 }
-function line(a,b,bold=false){return '<div class="reportline"><span>'+(bold?'<b>'+a+'</b>':a)+'</span><strong>'+(bold?'<b>'+b+'</b>':b)+'</strong></div>'}
+
+function line(a,b,bold=false){
+ return '<div class="reportline"><span>'+
+  (bold?'<b>'+a+'</b>':a)+'</span><strong>'+
+  (bold?'<b>'+b+'</b>':b)+'</strong></div>';
+}
+
 function renderReport(){
- const f=$("rFrom").value||"0000-01-01",t=$("rTo").value||"9999-12-31";
- const ss=sales.filter(x=>x.date>=f&&x.date<=t),ee=expenses.filter(x=>x.date>=f&&x.date<=t);
- const ca=ss.reduce((a,x)=>a+x.total,0),cash=cashFor(f,t),due=ss.reduce((a,x)=>a+x.due,0);
- const own=ee.filter(x=>x.type==="own").reduce((a,x)=>a+x.amount,0),shared=ee.filter(x=>x.type==="shared").reduce((a,x)=>a+x.amount,0);
- let h='<div class="sub">Période : '+f+' au '+t+'</div>'+line("Chiffre d’affaires",money(ca))+line("Encaissements",money(cash))+line("Crédits restant dus",money(due))+line("Dépenses propres",money(own))+line("Charges communes",money(shared))+line("Dépenses totales",money(own+shared))+line("Résultat commercial",money(ca-own-shared),true)+'<h3 style="margin:18px 0 8px">Résultat par activité</h3>';
+ const f=$("rFrom").value||"0000-01-01";
+ const t=$("rTo").value||"9999-12-31";
+ const ss=sales.filter(x=>x.date>=f&&x.date<=t);
+ const ee=expenses.filter(x=>x.date>=f&&x.date<=t);
+ const ca=ss.reduce((a,x)=>a+x.total,0);
+ const cash=cashFor(f,t);
+ const due=ss.reduce((a,x)=>a+x.due,0);
+ const own=ee.filter(x=>x.type==="own").reduce((a,x)=>a+x.amount,0);
+ const shared=ee.filter(x=>x.type==="shared").reduce((a,x)=>a+x.amount,0);
+
+ let h='<div class="sub">Période : '+f+' au '+t+'</div>'+
+  line("Chiffre d’affaires",money(ca))+
+  line("Encaissements",money(cash))+
+  line("Crédits restant dus",money(due))+
+  line("Dépenses propres",money(own))+
+  line("Charges communes",money(shared))+
+  line("Dépenses totales",money(own+shared))+
+  line("Résultat commercial",money(ca-own-shared),true)+
+  '<h3 style="margin:18px 0 8px">Résultat par activité</h3>';
+
  for(const a of ACTS){
-  const ac=ss.filter(x=>x.act===a).reduce((v,x)=>v+x.total,0),ex=ee.filter(x=>x.type==="own"&&x.act===a).reduce((v,x)=>v+x.amount,0);
-  h+='<div class="listrow"><b>'+a+'</b>'+line("Chiffre d’affaires",money(ac))+line("Dépenses propres",money(ex))+line("Part des charges communes",money(shared/3))+line("Résultat",money(ac-ex-shared/3),true)+'</div>';
+  const ac=ss.filter(x=>x.act===a).reduce((v,x)=>v+x.total,0);
+  const ex=ee.filter(x=>x.type==="own"&&x.act===a).reduce((v,x)=>v+x.amount,0);
+  h+='<div class="listrow"><b>'+a+'</b>'+
+   line("Chiffre d’affaires",money(ac))+
+   line("Dépenses propres",money(ex))+
+   line("Part des charges communes",money(shared/3))+
+   line("Résultat",money(ac-ex-shared/3),true)+
+   '</div>';
  }
+
  $("reportContent").innerHTML=h;
 }
-function renderAll(){if(!db)return;renderHome();renderDebts();renderHistory();renderReport()}
 
-function snapshot(){
- return {app:"NtiobalaGlaces",version:2,exportedAt:new Date().toISOString(),sales,expenses,collections};
+function renderAll(){
+ if(!db)return;
+ renderHome();
+ renderDebts();
+ renderHistory();
+ renderReport();
 }
+
+/**
+ * EXPORT JSON LOCAL
+ */
+function snapshot(){
+ return {
+  app:"NtiobalaGlaces",
+  version:3,
+  exportedAt:new Date().toISOString(),
+  sales,expenses,collections,
+  deleted:JSON.parse(localStorage.getItem("nti_deleted")||"[]")
+ };
+}
+
 function backup(){
- const blob=new Blob([JSON.stringify(snapshot(),null,2)],{type:"application/json"});
- const a=document.createElement("a"),url=URL.createObjectURL(blob);
- a.href=url;a.download="ntiobala-sauvegarde-"+today()+".json";a.click();
+ const blob=new Blob(
+  [JSON.stringify(snapshot(),null,2)],
+  {type:"application/json"}
+ );
+ const a=document.createElement("a");
+ const url=URL.createObjectURL(blob);
+ a.href=url;
+ a.download="ntiobala-sauvegarde-"+today()+".json";
+ a.click();
  setTimeout(()=>URL.revokeObjectURL(url),1200);
 }
+
 async function restore(){
  const file=$("restoreFile").files[0];
  if(!file)return alert("Choisis un fichier JSON.");
  if(!confirm("La restauration remplacera les données actuelles. Continuer ?"))return;
+
  try{
   const x=JSON.parse(await file.text());
-  if(!Array.isArray(x.sales)||!Array.isArray(x.expenses))throw new Error("Fichier incompatible");
-  const tx=db.transaction(["sales","expenses","collections"],"readwrite");
-  ["sales","expenses","collections"].forEach(s=>tx.objectStore(s).clear());
+
+  if(!Array.isArray(x.sales)||!Array.isArray(x.expenses)){
+   throw new Error("Fichier incompatible");
+  }
+
+  const tx=db.transaction(
+   ["sales","expenses","collections"],
+   "readwrite"
+  );
+
+  ["sales","expenses","collections"].forEach(k=>
+   tx.objectStore(k).clear()
+  );
+
   x.sales.forEach(v=>tx.objectStore("sales").put(v));
   x.expenses.forEach(v=>tx.objectStore("expenses").put(v));
-  (x.collections||[]).forEach(v=>tx.objectStore("collections").put(v));
-  tx.oncomplete=async()=>{await refresh();alert("Sauvegarde restaurée.")};
+  (x.collections||[]).forEach(v=>
+   tx.objectStore("collections").put(v)
+  );
+
+  tx.oncomplete=async()=>{
+   localStorage.setItem("nti_deleted",JSON.stringify(x.deleted||[]));
+   await refresh();
+   alert("Sauvegarde restaurée.");
+  };
+
   tx.onerror=()=>alert("Erreur de restauration.");
- }catch(e){alert("Fichier JSON invalide : "+e.message)}
+
+ }catch(e){
+  alert("Fichier JSON invalide : "+e.message);
+ }
 }
 
-/* GOOGLE DRIVE : SAUVEGARDE MANUELLE */
+/**
+ * PARAMÈTRES GOOGLE DRIVE
+ */
 function driveConfig(){
  return {
   url:localStorage.getItem("nti_drive_url")||"",
   token:localStorage.getItem("nti_drive_token")||""
  };
 }
+
 function saveDrive(){
  const url=$("driveUrl").value.trim();
  const token=$("driveToken").value.trim();
+
  if(!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(url)){
   alert("URL invalide. Elle doit se terminer par /exec.");
   return;
  }
- if(token.length<30){alert("Vérifie le code secret.");return}
- localStorage.setItem("nti_drive_url",url);
- localStorage.setItem("nti_drive_token",token);
- $("driveStatus").textContent="Paramètres enregistrés sur cet iPhone.";
- alert("Paramètres Google Drive enregistrés.");
-}
-async function driveSend(action="backup"){
- const config=driveConfig();
- if(!config.url||!config.token){
-  alert("Renseigne d'abord l'URL Apps Script et le code secret.");
+
+ if(token.length<30){
+  alert("Vérifie le code secret.");
   return;
  }
- try{
-  await refresh();
-  const payload={
+
+ localStorage.setItem("nti_drive_url",url);
+ localStorage.setItem("nti_drive_token",token);
+
+ $("driveStatus").textContent="Paramètres enregistrés sur cet appareil.";
+ alert("Paramètres Google Drive enregistrés.");
+}
+
+/**
+ * TÉLÉCHARGEMENT DES DONNÉES COMMUNES
+ */
+function jsonpDownload(config){
+ return new Promise((resolve,reject)=>{
+  const cb="ntiCallback_"+Date.now()+"_"+Math.floor(Math.random()*100000);
+  const script=document.createElement("script");
+
+  let timer=setTimeout(
+   ()=>finish(new Error("Délai dépassé lors du téléchargement.")),
+   20000
+  );
+
+  function finish(err,data){
+   clearTimeout(timer);
+   delete window[cb];
+   script.remove();
+   err?reject(err):resolve(data);
+  }
+
+  window[cb]=data=>finish(null,data);
+
+  script.onerror=()=>{
+   finish(new Error("Impossible de récupérer les données Google Drive."));
+  };
+
+  script.src=config.url+
+   "?action=download&token="+encodeURIComponent(config.token)+
+   "&callback="+cb+"&t="+Date.now();
+
+  document.head.appendChild(script);
+ });
+}
+
+/**
+ * ENVOI DES DONNÉES AU SERVEUR
+ */
+async function postSnapshot(config,action,snap){
+ const response=await fetch(config.url,{
+  method:"POST",
+  mode:"no-cors",
+  headers:{"Content-Type":"text/plain;charset=utf-8"},
+  body:JSON.stringify({
    app:"NtiobalaGlaces",
    token:config.token,
-   action:action,
-   snapshot:snapshot()
-  };
-  $("driveStatus").textContent="Envoi en cours…";
-  await fetch(config.url,{
-   method:"POST",
-   mode:"no-cors",
-   headers:{"Content-Type":"text/plain;charset=utf-8"},
-   body:JSON.stringify(payload)
-  });
-  $("driveStatus").textContent="Demande envoyée. Vérifie le fichier dans Google Drive.";
-  alert("Demande envoyée. Vérifie dans Google Drive que Ntiobala_DERNIERE_COPIE.json a été actualisé.");
+   action,
+   snapshot:snap
+  })
+ });
+
+ // En mode no-cors, le navigateur ne permet pas de lire le corps
+ // de réponse. La confirmation sera faite par le téléchargement suivant.
+ return response;
+}
+
+/**
+ * INTÉGRATION DES DONNÉES DISTANTES DANS INDEXEDDB
+ */
+async function applyRemoteSnapshot(remote){
+ if(
+  !remote||
+  !Array.isArray(remote.sales)||
+  !Array.isArray(remote.expenses)
+ ){
+  throw new Error("Réponse distante invalide.");
+ }
+
+ const deleted=remote.deleted||[];
+ const tx=db.transaction(
+  ["sales","expenses","collections"],
+  "readwrite"
+ );
+
+ const stores=["sales","expenses","collections"];
+
+ for(const d of deleted){
+  if(stores.includes(d.store)){
+   tx.objectStore(d.store).delete(d.id);
+  }
+ }
+
+ for(const store of stores){
+  for(const item of (remote[store]||[])){
+   tx.objectStore(store).put(item);
+  }
+ }
+
+ await new Promise((resolve,reject)=>{
+  tx.oncomplete=resolve;
+  tx.onerror=()=>reject(tx.error);
+  tx.onabort=()=>reject(
+   tx.error||new Error("Fusion locale annulée")
+  );
+ });
+
+ localStorage.setItem("nti_deleted",JSON.stringify(deleted));
+ await refresh();
+}
+
+/**
+ * SYNCHRONISATION OU SAUVEGARDE MANUELLE
+ */
+async function driveSend(action="sync",quiet=false){
+ const config=driveConfig();
+
+ if(!config.url||!config.token){
+  $("driveStatus").textContent="Google Drive non configuré.";
+  if(!quiet){
+   alert("Renseigne l'URL et le code secret dans les paramètres.");
+  }
+  return;
+ }
+
+ try{
+  $("driveStatus").textContent=
+   action==="sync"
+   ?"Synchronisation : envoi des opérations…"
+   :"Création de la sauvegarde…";
+
+  await refresh();
+  const local=snapshot();
+
+  // Envoi au serveur. Le serveur fusionne les opérations.
+  await postSnapshot(config,action,local);
+
+  // Téléchargement de la base commune après traitement.
+  const response=await jsonpDownload(config);
+
+  if(!response||!response.ok){
+   throw new Error(
+    response?.error||"Synchronisation refusée par le serveur."
+   );
+  }
+
+  await applyRemoteSnapshot(response.snapshot);
+
+  if(action==="backup"){
+   $("driveStatus").textContent=
+    "Sauvegarde manuelle créée et vérifiée.";
+   if(!quiet){
+    alert("Sauvegarde créée. La base commune a été conservée.");
+   }
+  }else{
+   $("driveStatus").textContent=
+    "Synchronisation terminée · "+
+    new Date().toLocaleTimeString("fr-FR");
+
+   if(!quiet){
+    alert("Synchronisation terminée. Les données communes sont à jour.");
+   }
+  }
+
  }catch(e){
-  $("driveStatus").textContent="Échec de l'envoi. Vérifie Internet et l'URL.";
-  alert("Envoi impossible : "+e.message);
+  $("driveStatus").textContent=
+   "Échec de synchronisation : "+e.message;
+
+  if(!quiet){
+   alert("Synchronisation impossible : "+e.message);
+  }
  }
 }
 
+/**
+ * DÉMARRAGE
+ */
 async function init(){
  try{
   await openDB();
+
   $("sDate").value=today();
   $("eDate").value=today();
   $("rFrom").value=today().slice(0,8)+"01";
   $("rTo").value=today();
-  ["sQty","sPrice","sPaid"].forEach(id=>$(id).addEventListener("input",preview));
+
+  ["sQty","sPrice","sPaid"].forEach(id=>
+   $(id).addEventListener("input",preview)
+  );
+
   const config=driveConfig();
   $("driveUrl").value=config.url;
   $("driveToken").value=config.token;
+
   await refresh();
+
   ready=true;
   preview();
+
+  // Synchronisation automatique à l'ouverture si les paramètres existent.
+  if(config.url&&config.token){
+   setTimeout(()=>driveSend("sync",true),1200);
+  }
+
  }catch(e){
-  alert("Impossible de démarrer le stockage local : "+e.message+". Ouvre l'application dans Safari.");
+  alert(
+   "Impossible de démarrer le stockage local : "+
+   e.message+". Ouvre l'application dans Safari."
+  );
  }
 }
-window.addEventListener("error",e=>console.error("Erreur JavaScript :",e.error));
-window.addEventListener("unhandledrejection",e=>alert("Erreur : "+(e.reason?.message||e.reason)));
+
+window.addEventListener("error",e=>
+ console.error("Erreur JavaScript :",e.error)
+);
+
+window.addEventListener("unhandledrejection",e=>
+ alert("Erreur : "+(e.reason?.message||e.reason))
+);
+
 init();
 </script>
 </body>
